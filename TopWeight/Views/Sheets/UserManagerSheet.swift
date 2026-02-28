@@ -39,7 +39,7 @@ struct UserManagerSheet: View {
                     Button("Add photo or avatar") {
                         showAddPhotoSheet = true
                     }
-                    .foregroundStyle(.accentColor)
+                    .foregroundStyle(Color.accentColor)
                     HStack {
                         Spacer()
                         Button("Add") {

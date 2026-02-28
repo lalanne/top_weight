@@ -360,7 +360,7 @@ struct UserChip: View {
             .padding(.vertical, 8)
         }
         .buttonStyle(.borderedProminent)
-        .tint(isSelected ? .accentColor : .gray.opacity(0.5))
+        .tint(isSelected ? Color.accentColor : Color.gray.opacity(0.5))
         .accessibilityLabel(user.name)
         .accessibilityHint(isSelected ? "Selected" : "Select this user")
     }
@@ -380,7 +380,7 @@ struct ExerciseChip: View {
                 .padding(.vertical, 10)
         }
         .buttonStyle(.borderedProminent)
-        .tint(isSelected ? .accentColor : .gray.opacity(0.5))
+        .tint(isSelected ? Color.accentColor : Color.gray.opacity(0.5))
         .accessibilityLabel(exercise.name)
         .accessibilityHint(isSelected ? "Selected" : "Select this exercise")
     }
