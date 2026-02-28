@@ -350,11 +350,14 @@ struct UserChip: View {
 
     var body: some View {
         Button(action: action) {
-            Text(user.name)
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+            HStack(spacing: 8) {
+                UserAvatarView(user: user, size: 28)
+                Text(user.name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
         }
         .buttonStyle(.borderedProminent)
         .tint(isSelected ? .accentColor : .gray.opacity(0.5))

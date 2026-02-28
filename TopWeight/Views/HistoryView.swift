@@ -76,6 +76,9 @@ struct HistoryRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
+                if let user = record.user {
+                    UserAvatarView(user: user, size: 32)
+                }
                 Text(record.user?.name ?? "—")
                     .font(.headline)
                 Spacer()

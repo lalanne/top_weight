@@ -7,19 +7,46 @@ struct UserManagerSheet: View {
     @Query(sort: \User.createdAt, order: .reverse) private var users: [User]
 
     @State private var newUserName = ""
+    @State private var newUserPhotoData: Data?
+    @State private var newUserAvatarSymbol: String?
     @State private var userToEdit: User?
     @State private var showAddError = false
+    @State private var showAddPhotoSheet = false
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    HStack {
+                    HStack(spacing: 12) {
+                        if let data = newUserPhotoData, let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 44, height: 44)
+                                .clipShape(Circle())
+                        } else if let symbol = newUserAvatarSymbol {
+                            Image(systemName: symbol)
+                                .font(.title2)
+                                .frame(width: 44, height: 44)
+                                .background(Color.secondary.opacity(0.2), in: Circle())
+                        } else {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 44))
+                                .foregroundStyle(.secondary)
+                        }
                         TextField("User name", text: $newUserName)
+                    }
+                    Button("Add photo or avatar") {
+                        showAddPhotoSheet = true
+                    }
+                    .foregroundStyle(.accentColor)
+                    HStack {
+                        Spacer()
                         Button("Add") {
                             addUser()
                         }
                         .disabled(newUserName.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .buttonStyle(.borderedProminent)
                     }
                 } header: {
                     Text("Add new user")
@@ -30,7 +57,10 @@ struct UserManagerSheet: View {
                         Button {
                             userToEdit = user
                         } label: {
-                            Text(user.name)
+                            HStack(spacing: 12) {
+                                UserAvatarView(user: user, size: 36)
+                                Text(user.name)
+                            }
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
@@ -64,6 +94,27 @@ struct UserManagerSheet: View {
                     userToEdit = nil
                 }
             }
+            .sheet(isPresented: $showAddPhotoSheet) {
+                NavigationStack {
+                    AvatarPickerView(
+                        selectedSymbol: $newUserAvatarSymbol,
+                        onPhotoPicked: { data in
+                            newUserPhotoData = data
+                            newUserAvatarSymbol = nil
+                        }
+                    )
+                    .padding()
+                    .navigationTitle("Photo or avatar")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") {
+                                showAddPhotoSheet = false
+                            }
+                        }
+                    }
+                }
+            }
             .alert("Could not add user", isPresented: $showAddError) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -76,12 +127,18 @@ struct UserManagerSheet: View {
         let name = newUserName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
 
-        let user = User(name: name)
+        let user = User(
+            name: name,
+            photoData: newUserPhotoData,
+            avatarSymbol: newUserAvatarSymbol
+        )
         modelContext.insert(user)
 
         do {
             try modelContext.save()
             newUserName = ""
+            newUserPhotoData = nil
+            newUserAvatarSymbol = nil
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } catch {
             showAddError = true
@@ -93,18 +150,44 @@ struct EditUserSheet: View {
     @Environment(\.modelContext) private var modelContext
     let user: User
     @State private var name: String
+    @State private var selectedAvatarSymbol: String?
     let onDismiss: () -> Void
 
     init(user: User, onDismiss: @escaping () -> Void) {
         self.user = user
         self._name = State(initialValue: user.name)
+        self._selectedAvatarSymbol = State(initialValue: user.avatarSymbol)
         self.onDismiss = onDismiss
     }
 
     var body: some View {
         NavigationStack {
             Form {
-                TextField("User name", text: $name)
+                Section {
+                    HStack(spacing: 16) {
+                        UserAvatarView(user: user, size: 64)
+                        TextField("User name", text: $name)
+                    }
+                }
+                Section {
+                    AvatarPickerView(
+                        selectedSymbol: $selectedAvatarSymbol,
+                        onPhotoPicked: { data in
+                            user.photoData = data
+                            user.avatarSymbol = nil
+                            selectedAvatarSymbol = nil
+                        }
+                    )
+                }
+                if user.photoData != nil || user.avatarSymbol != nil {
+                    Section {
+                        Button("Remove photo", role: .destructive) {
+                            user.photoData = nil
+                            user.avatarSymbol = nil
+                            selectedAvatarSymbol = nil
+                        }
+                    }
+                }
             }
             .navigationTitle("Edit User")
             .navigationBarTitleDisplayMode(.inline)
@@ -119,6 +202,7 @@ struct EditUserSheet: View {
                         let trimmed = name.trimmingCharacters(in: .whitespaces)
                         guard !trimmed.isEmpty else { return }
                         user.name = trimmed
+                        user.avatarSymbol = selectedAvatarSymbol
                         try? modelContext.save()
                         onDismiss()
                     }
