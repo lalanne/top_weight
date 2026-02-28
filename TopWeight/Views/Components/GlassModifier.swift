@@ -1,14 +1,9 @@
 import SwiftUI
 
 extension View {
-    /// Applies Liquid Glass (iOS 26+) or ultraThinMaterial fallback.
+    /// Applies a frosted glass-style background. Uses ultraThinMaterial for broad compatibility.
+    /// On iOS 26+, you could switch to .glassEffect() for Liquid Glass.
     func glassBackground(cornerRadius: CGFloat = 16) -> some View {
-        Group {
-            if #available(iOS 26.0, *) {
-                self.glassEffect(.regular, in: RoundedRectangle(cornerRadius: cornerRadius))
-            } else {
-                self.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
-            }
-        }
+        self.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
     }
 }

@@ -160,7 +160,7 @@ struct RecordView: View {
             )
         }
         .padding()
-        .glassBackground(cornerRadius: 16)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 
     private var distanceInputSection: some View {
@@ -183,7 +183,7 @@ struct RecordView: View {
             }
         }
         .padding()
-        .glassBackground(cornerRadius: 16)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 
     private var repsOnlyInputSection: some View {
@@ -200,7 +200,7 @@ struct RecordView: View {
             )
         }
         .padding()
-        .glassBackground(cornerRadius: 16)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 
     private var saveButton: some View {
@@ -231,7 +231,7 @@ struct RecordView: View {
                     .fontWeight(.semibold)
             }
             .padding(32)
-            .glassBackground(cornerRadius: 20)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
         }
         .transition(.scale.combined(with: .opacity))
     }
