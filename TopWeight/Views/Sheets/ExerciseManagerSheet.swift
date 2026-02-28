@@ -7,21 +7,29 @@ struct ExerciseManagerSheet: View {
     @Query(sort: \Exercise.createdAt, order: .reverse) private var exercises: [Exercise]
 
     @State private var newExerciseName = ""
+    @State private var newExerciseType: ExerciseType = .strength
     @State private var exerciseToEdit: Exercise?
+    @State private var showAddError = false
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    HStack {
-                        TextField("Exercise name", text: $newExerciseName)
-                        Button("Add") {
-                            addExercise()
-                        }
-                        .disabled(newExerciseName.trimmingCharacters(in: .whitespaces).isEmpty)
+                    TextField("Exercise name", text: $newExerciseName)
+                    Picker("Type", selection: $newExerciseType) {
+                        Text("Strength").tag(ExerciseType.strength)
+                        Text("Distance").tag(ExerciseType.distance)
+                        Text("Reps only").tag(ExerciseType.repsOnly)
                     }
+                    .pickerStyle(.menu)
+                    Button("Add") {
+                        addExercise()
+                    }
+                    .disabled(newExerciseName.trimmingCharacters(in: .whitespaces).isEmpty)
                 } header: {
                     Text("Add new exercise")
+                } footer: {
+                    Text("Strength: weight, reps, series. Distance: km + indoor/outdoor. Reps only: just repetitions (e.g. Push-ups, Pull-ups).")
                 }
 
                 Section {
@@ -29,7 +37,13 @@ struct ExerciseManagerSheet: View {
                         Button {
                             exerciseToEdit = exercise
                         } label: {
-                            Text(exercise.name)
+                            HStack {
+                                Text(exercise.name)
+                                Spacer()
+                                Text(typeLabel(for: exercise))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
@@ -63,6 +77,19 @@ struct ExerciseManagerSheet: View {
                     exerciseToEdit = nil
                 }
             }
+            .alert("Could not add exercise", isPresented: $showAddError) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Something went wrong. Please try again.")
+            }
+        }
+    }
+
+    private func typeLabel(for exercise: Exercise) -> String {
+        switch exercise.exerciseType {
+        case .strength: return "Strength"
+        case .distance: return "Distance"
+        case .repsOnly: return "Reps only"
         }
     }
 
@@ -70,14 +97,15 @@ struct ExerciseManagerSheet: View {
         let name = newExerciseName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
 
-        let exercise = Exercise(name: name)
+        let exercise = Exercise(name: name, exerciseType: newExerciseType)
         modelContext.insert(exercise)
 
         do {
             try modelContext.save()
             newExerciseName = ""
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } catch {
-            // In a real app, show error
+            showAddError = true
         }
     }
 }
@@ -86,11 +114,13 @@ struct EditExerciseSheet: View {
     @Environment(\.modelContext) private var modelContext
     let exercise: Exercise
     @State private var name: String
+    @State private var exerciseType: ExerciseType
     let onDismiss: () -> Void
 
     init(exercise: Exercise, onDismiss: @escaping () -> Void) {
         self.exercise = exercise
         self._name = State(initialValue: exercise.name)
+        self._exerciseType = State(initialValue: exercise.exerciseType)
         self.onDismiss = onDismiss
     }
 
@@ -98,6 +128,12 @@ struct EditExerciseSheet: View {
         NavigationStack {
             Form {
                 TextField("Exercise name", text: $name)
+                Picker("Type", selection: $exerciseType) {
+                    Text("Strength").tag(ExerciseType.strength)
+                    Text("Distance").tag(ExerciseType.distance)
+                    Text("Reps only").tag(ExerciseType.repsOnly)
+                }
+                .pickerStyle(.menu)
             }
             .navigationTitle("Edit Exercise")
             .navigationBarTitleDisplayMode(.inline)
@@ -112,6 +148,7 @@ struct EditExerciseSheet: View {
                         let trimmed = name.trimmingCharacters(in: .whitespaces)
                         guard !trimmed.isEmpty else { return }
                         exercise.name = trimmed
+                        exercise.exerciseType = exerciseType
                         try? modelContext.save()
                         onDismiss()
                     }

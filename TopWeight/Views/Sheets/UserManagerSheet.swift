@@ -8,6 +8,7 @@ struct UserManagerSheet: View {
 
     @State private var newUserName = ""
     @State private var userToEdit: User?
+    @State private var showAddError = false
 
     var body: some View {
         NavigationStack {
@@ -63,6 +64,11 @@ struct UserManagerSheet: View {
                     userToEdit = nil
                 }
             }
+            .alert("Could not add user", isPresented: $showAddError) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Something went wrong. Please try again.")
+            }
         }
     }
 
@@ -76,8 +82,9 @@ struct UserManagerSheet: View {
         do {
             try modelContext.save()
             newUserName = ""
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } catch {
-            // In a real app, show error
+            showAddError = true
         }
     }
 }

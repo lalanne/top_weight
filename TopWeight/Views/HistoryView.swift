@@ -29,6 +29,7 @@ struct HistoryView: View {
                                     HistoryRow(record: record)
                                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                             Button(role: .destructive) {
+                                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                                 modelContext.delete(record)
                                                 try? modelContext.save()
                                             } label: {
@@ -50,8 +51,9 @@ struct HistoryView: View {
         ContentUnavailableView(
             "No workouts yet",
             systemImage: "dumbbell.fill",
-            description: Text("Tap Record to add your first workout.")
+            description: Text("Your recorded workouts will appear here. Switch to the Record tab to add your first workout.")
         )
+        .accessibilityLabel("No workouts yet. Switch to Record tab to add your first workout.")
     }
 
     private func sectionTitle(for date: Date) -> String {
@@ -92,10 +94,19 @@ struct HistoryRow: View {
             }
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(record.user?.name ?? "Unknown"), \(record.exercise?.name ?? "Unknown"), \(detailText)")
     }
 
     private var detailText: String {
-        "\(Int(record.weight)) kg × \(record.reps) reps × \(record.series) series"
+        if record.isDistanceEntry, let dist = record.distance {
+            let location = (record.isIndoor == true) ? "indoors" : "outdoors"
+            return String(format: "%.1f km, %@", dist, location)
+        } else if record.exercise?.isRepsOnlyType == true {
+            return "\(record.reps) reps"
+        } else {
+            return "\(Int(record.weight)) kg × \(record.reps) reps × \(record.series) series"
+        }
     }
 
     private func formatTime(_ date: Date) -> String {

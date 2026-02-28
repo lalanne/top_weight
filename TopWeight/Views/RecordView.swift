@@ -11,20 +11,34 @@ struct RecordView: View {
     @State private var weight: Double = 0
     @State private var reps: Int = 10
     @State private var series: Int = 1
+    @State private var distance: Double = 0
+    @State private var isIndoor: Bool = false
     @State private var showUserSheet = false
     @State private var showExerciseSheet = false
     @State private var showSavedFeedback = false
+    @State private var showSaveError = false
 
     private let lastUserIDKey = "lastSelectedUserID"
     private let lastExerciseIDKey = "lastSelectedExerciseID"
     private let weightStep: Double = 2.5
 
+    private var isDistanceExercise: Bool {
+        selectedExercise?.isDistanceType == true
+    }
+
+    private var isRepsOnlyExercise: Bool {
+        selectedExercise?.isRepsOnlyType == true
+    }
+
     private var canSave: Bool {
-        selectedUser != nil &&
-        selectedExercise != nil &&
-        weight > 0 &&
-        reps > 0 &&
-        series > 0
+        guard selectedUser != nil, selectedExercise != nil else { return false }
+        if isDistanceExercise {
+            return distance > 0
+        } else if isRepsOnlyExercise {
+            return reps > 0
+        } else {
+            return weight > 0 && reps > 0 && series > 0
+        }
     }
 
     var body: some View {
@@ -49,6 +63,11 @@ struct RecordView: View {
             }
             .sheet(isPresented: $showExerciseSheet) {
                 ExerciseManagerSheet()
+            }
+            .alert("Could not save", isPresented: $showSaveError) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Something went wrong. Please try again.")
             }
             .onAppear(perform: restoreLastUsed)
         }
@@ -100,45 +119,95 @@ struct RecordView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            VStack(spacing: 20) {
-                StepperField(
-                    title: "Weight (kg)",
-                    value: $weight,
-                    step: weightStep,
-                    range: 0...500,
-                    format: "%.1f"
-                )
-                StepperField(
-                    title: "Repetitions",
-                    value: Binding(
-                        get: { Double(reps) },
-                        set: { reps = max(1, Int($0)) }
-                    ),
-                    step: 1,
-                    range: 1...999,
-                    format: "%.0f"
-                )
-                StepperField(
-                    title: "Series",
-                    value: Binding(
-                        get: { Double(series) },
-                        set: { series = max(1, min(50, Int($0))) }
-                    ),
-                    step: 1,
-                    range: 1...50,
-                    format: "%.0f"
-                )
+            if isDistanceExercise {
+                distanceInputSection
+            } else if isRepsOnlyExercise {
+                repsOnlyInputSection
+            } else {
+                strengthInputSection
             }
-            .padding()
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
         }
+    }
+
+    private var strengthInputSection: some View {
+        VStack(spacing: 20) {
+            StepperField(
+                title: "Weight (kg)",
+                value: $weight,
+                step: weightStep,
+                range: 0...500,
+                format: "%.1f"
+            )
+            StepperField(
+                title: "Repetitions",
+                value: Binding(
+                    get: { Double(reps) },
+                    set: { reps = max(1, Int($0)) }
+                ),
+                step: 1,
+                range: 1...999,
+                format: "%.0f"
+            )
+            StepperField(
+                title: "Series",
+                value: Binding(
+                    get: { Double(series) },
+                    set: { series = max(1, min(50, Int($0))) }
+                ),
+                step: 1,
+                range: 1...50,
+                format: "%.0f"
+            )
+        }
+        .padding()
+        .glassBackground(cornerRadius: 16)
+    }
+
+    private var distanceInputSection: some View {
+        VStack(spacing: 20) {
+            StepperField(
+                title: "Distance (km)",
+                value: $distance,
+                step: 0.5,
+                range: 0...100,
+                format: "%.1f"
+            )
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Location")
+                    .font(.headline)
+                Picker("", selection: $isIndoor) {
+                    Text("Outdoors").tag(false)
+                    Text("Indoors").tag(true)
+                }
+                .pickerStyle(.segmented)
+            }
+        }
+        .padding()
+        .glassBackground(cornerRadius: 16)
+    }
+
+    private var repsOnlyInputSection: some View {
+        VStack(spacing: 20) {
+            StepperField(
+                title: "Repetitions",
+                value: Binding(
+                    get: { Double(reps) },
+                    set: { reps = max(1, Int($0)) }
+                ),
+                step: 1,
+                range: 1...999,
+                format: "%.0f"
+            )
+        }
+        .padding()
+        .glassBackground(cornerRadius: 16)
     }
 
     private var saveButton: some View {
         Button(action: saveRecord) {
             HStack {
                 Image(systemName: "checkmark.circle.fill")
-                Text("Save workout")
+                Text(isDistanceExercise || isRepsOnlyExercise ? "Save" : "Save workout")
                     .fontWeight(.semibold)
             }
             .frame(maxWidth: .infinity)
@@ -146,6 +215,7 @@ struct RecordView: View {
         }
         .buttonStyle(.borderedProminent)
         .disabled(!canSave)
+        .accessibilityHint("Saves the workout with selected user, exercise, weight, reps, and series")
     }
 
     private var savedFeedbackOverlay: some View {
@@ -161,9 +231,9 @@ struct RecordView: View {
                     .fontWeight(.semibold)
             }
             .padding(32)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+            .glassBackground(cornerRadius: 20)
         }
-        .transition(.opacity)
+        .transition(.scale.combined(with: .opacity))
     }
 
     private func sectionHeader(_ title: String, addAction: @escaping () -> Void) -> some View {
@@ -172,21 +242,37 @@ struct RecordView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
             Spacer()
-            Button(action: addAction) {
+            Button(action: {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                addAction()
+            }) {
                 Image(systemName: "plus.circle.fill")
                     .font(.title2)
             }
+            .accessibilityLabel("Add \(title)")
         }
     }
 
     private func selectUser(_ user: User) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         selectedUser = user
         UserDefaults.standard.set(user.id.uuidString, forKey: lastUserIDKey)
     }
 
     private func selectExercise(_ exercise: Exercise) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         selectedExercise = exercise
         UserDefaults.standard.set(exercise.id.uuidString, forKey: lastExerciseIDKey)
+        if exercise.isDistanceType {
+            distance = 0
+            isIndoor = false
+        } else if exercise.isRepsOnlyType {
+            reps = 1
+        } else {
+            weight = 0
+            reps = 10
+            series = 1
+        }
     }
 
     private func restoreLastUsed() {
@@ -195,22 +281,46 @@ struct RecordView: View {
             selectedUser = users.first { $0.id == id }
         }
         if let idStr = UserDefaults.standard.string(forKey: lastExerciseIDKey),
-           let id = UUID(uuidString: idStr) {
-            selectedExercise = exercises.first { $0.id == id }
+           let id = UUID(uuidString: idStr),
+           let exercise = exercises.first(where: { $0.id == id }) {
+            selectedExercise = exercise
+            if exercise.isDistanceType {
+                distance = 0
+                isIndoor = false
+            } else if exercise.isRepsOnlyType {
+                reps = 1
+            } else {
+                weight = 0
+                reps = 10
+                series = 1
+            }
         }
     }
 
     private func saveRecord() {
         guard let user = selectedUser, let exercise = selectedExercise else { return }
-        guard weight > 0, reps > 0, series > 0 else { return }
 
-        let record = WorkoutRecord(
-            weight: weight,
-            reps: reps,
-            series: series,
-            user: user,
-            exercise: exercise
-        )
+        let record: WorkoutRecord
+        if isDistanceExercise {
+            guard distance > 0 else { return }
+            record = WorkoutRecord(
+                weight: 0, reps: 0, series: 0,
+                distance: distance, isIndoor: isIndoor,
+                user: user, exercise: exercise
+            )
+        } else if isRepsOnlyExercise {
+            guard reps > 0 else { return }
+            record = WorkoutRecord(
+                weight: 0, reps: reps, series: 0,
+                user: user, exercise: exercise
+            )
+        } else {
+            guard weight > 0, reps > 0, series > 0 else { return }
+            record = WorkoutRecord(
+                weight: weight, reps: reps, series: series,
+                user: user, exercise: exercise
+            )
+        }
         modelContext.insert(record)
 
         do {
@@ -226,7 +336,7 @@ struct RecordView: View {
                 }
             }
         } catch {
-            // In a real app, show an error alert
+            showSaveError = true
         }
     }
 }
@@ -248,6 +358,8 @@ struct UserChip: View {
         }
         .buttonStyle(.borderedProminent)
         .tint(isSelected ? .accentColor : .gray.opacity(0.5))
+        .accessibilityLabel(user.name)
+        .accessibilityHint(isSelected ? "Selected" : "Select this user")
     }
 }
 
@@ -266,6 +378,8 @@ struct ExerciseChip: View {
         }
         .buttonStyle(.borderedProminent)
         .tint(isSelected ? .accentColor : .gray.opacity(0.5))
+        .accessibilityLabel(exercise.name)
+        .accessibilityHint(isSelected ? "Selected" : "Select this exercise")
     }
 }
 
@@ -274,7 +388,10 @@ struct AddChip: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            action()
+        }) {
             HStack(spacing: 4) {
                 Image(systemName: "plus")
                 Text(title)
@@ -284,6 +401,8 @@ struct AddChip: View {
             .padding(.vertical, 10)
         }
         .buttonStyle(.bordered)
+        .accessibilityLabel(title)
+        .accessibilityHint("Opens form to add new")
     }
 }
 
@@ -301,23 +420,28 @@ struct StepperField: View {
             Spacer()
             HStack(spacing: 16) {
                 Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     value = max(range.lowerBound, value - step)
                 } label: {
                     Image(systemName: "minus.circle.fill")
                         .font(.title2)
                 }
                 .disabled(value <= range.lowerBound)
+                .accessibilityLabel("Decrease \(title)")
                 Text(String(format: format, value))
                     .font(.title)
                     .fontWeight(.semibold)
                     .frame(minWidth: 60, alignment: .center)
+                    .accessibilityLabel("\(title): \(String(format: format, value))")
                 Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     value = min(range.upperBound, value + step)
                 } label: {
                     Image(systemName: "plus.circle.fill")
                         .font(.title2)
                 }
                 .disabled(value >= range.upperBound)
+                .accessibilityLabel("Increase \(title)")
             }
         }
     }

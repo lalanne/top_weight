@@ -9,15 +9,24 @@ final class WorkoutRecord {
     var series: Int
     var date: Date
 
+    /// For distance exercises (Running, Cycling, Walking): distance in km.
+    var distance: Double?
+    /// For distance exercises: true = indoors, false = outdoors.
+    var isIndoor: Bool?
+
     var user: User?
     var exercise: Exercise?
 
+    var isDistanceEntry: Bool { distance != nil }
+
     init(
         id: UUID = UUID(),
-        weight: Double,
-        reps: Int,
-        series: Int,
+        weight: Double = 0,
+        reps: Int = 0,
+        series: Int = 0,
         date: Date = Date(),
+        distance: Double? = nil,
+        isIndoor: Bool? = nil,
         user: User? = nil,
         exercise: Exercise? = nil
     ) {
@@ -26,6 +35,8 @@ final class WorkoutRecord {
         self.reps = reps
         self.series = series
         self.date = date
+        self.distance = distance
+        self.isIndoor = isIndoor
         self.user = user
         self.exercise = exercise
     }
