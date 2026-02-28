@@ -159,7 +159,7 @@ struct TopWeightApp: App {
         WindowGroup {
             MainTabView()
         }
-        .modelContainer(for: [User, Exercise, WorkoutRecord].self)
+        .modelContainer(for: [User.self, Exercise.self, WorkoutRecord.self])
     }
 }
 ```
