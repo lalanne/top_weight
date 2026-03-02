@@ -10,8 +10,10 @@ struct UserManagerSheet: View {
     @State private var newUserPhotoData: Data?
     @State private var newUserAvatarSymbol: String?
     @State private var userToEdit: User?
+    @State private var userToDelete: User?
     @State private var showAddError = false
     @State private var showAddPhotoSheet = false
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         NavigationStack {
@@ -60,12 +62,16 @@ struct UserManagerSheet: View {
                             HStack(spacing: 12) {
                                 UserAvatarView(user: user, size: 36)
                                 Text(user.name)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
                             }
                         }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                modelContext.delete(user)
-                                try? modelContext.save()
+                                userToDelete = user
+                                showDeleteConfirmation = true
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -73,6 +79,19 @@ struct UserManagerSheet: View {
                                 userToEdit = user
                             } label: {
                                 Label("Edit", systemImage: "pencil")
+                            }
+                        }
+                        .contextMenu {
+                            Button {
+                                userToEdit = user
+                            } label: {
+                                Label("Edit profile", systemImage: "pencil")
+                            }
+                            Button(role: .destructive) {
+                                userToDelete = user
+                                showDeleteConfirmation = true
+                            } label: {
+                                Label("Delete user", systemImage: "trash")
                             }
                         }
                     }
@@ -120,6 +139,23 @@ struct UserManagerSheet: View {
             } message: {
                 Text("Something went wrong. Please try again.")
             }
+            .alert("Delete user?", isPresented: $showDeleteConfirmation) {
+                Button("Cancel", role: .cancel) {
+                    userToDelete = nil
+                }
+                Button("Delete", role: .destructive) {
+                    if let user = userToDelete {
+                        modelContext.delete(user)
+                        try? modelContext.save()
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    }
+                    userToDelete = nil
+                }
+            } message: {
+                if let user = userToDelete {
+                    Text("Delete \(user.name)? This will also remove all their workout records.")
+                }
+            }
         }
     }
 
@@ -151,6 +187,7 @@ struct EditUserSheet: View {
     let user: User
     @State private var name: String
     @State private var selectedAvatarSymbol: String?
+    @State private var showDeleteUserConfirmation = false
     let onDismiss: () -> Void
 
     init(user: User, onDismiss: @escaping () -> Void) {
@@ -188,6 +225,11 @@ struct EditUserSheet: View {
                         }
                     }
                 }
+                Section {
+                    Button("Delete user", role: .destructive) {
+                        showDeleteUserConfirmation = true
+                    }
+                }
             }
             .navigationTitle("Edit User")
             .navigationBarTitleDisplayMode(.inline)
@@ -208,6 +250,17 @@ struct EditUserSheet: View {
                     }
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
+            }
+            .alert("Delete user?", isPresented: $showDeleteUserConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
+                    modelContext.delete(user)
+                    try? modelContext.save()
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    onDismiss()
+                }
+            } message: {
+                Text("Delete \(user.name)? This will also remove all their workout records.")
             }
         }
     }

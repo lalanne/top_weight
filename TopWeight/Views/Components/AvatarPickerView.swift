@@ -20,7 +20,7 @@ struct AvatarPickerView: View {
     @Binding var selectedSymbol: String?
     let onPhotoPicked: (Data) -> Void
     @State private var showImagePicker = false
-    @State private var imagePickerSource: UIImagePickerController.SourceType = .photoLibrary
+    @State private var useCamera = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -54,11 +54,12 @@ struct AvatarPickerView: View {
                 }
             }
         }
-        .sheet(isPresented: $showImagePicker) {
-            ImagePicker(sourceType: imagePickerSource) { data in
+        .fullScreenCover(isPresented: $showImagePicker) {
+            ImagePicker(sourceType: useCamera ? .camera : .photoLibrary) { data in
                 onPhotoPicked(data)
                 selectedSymbol = nil
             }
+            .ignoresSafeArea()
         }
     }
 
@@ -66,14 +67,14 @@ struct AvatarPickerView: View {
         Group {
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 Button {
-                    imagePickerSource = .camera
+                    useCamera = true
                     showImagePicker = true
                 } label: {
                     Label("Take photo", systemImage: "camera.fill")
                 }
             }
             Button {
-                imagePickerSource = .photoLibrary
+                useCamera = false
                 showImagePicker = true
             } label: {
                 Label("Choose photo", systemImage: "photo.on.rectangle")

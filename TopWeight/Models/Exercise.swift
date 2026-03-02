@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 
-/// Strength = weight/reps/series. Distance = km + indoor/outdoor. RepsOnly = just reps (Push-ups, Pull-ups, etc.)
+/// Strength = weight/reps/series. Distance = km + indoor/outdoor. RepsOnly = reps + series (Push-ups, Pull-ups, etc.)
 enum ExerciseType: String, Codable, CaseIterable {
     case strength
     case distance

@@ -29,7 +29,7 @@ struct ExerciseManagerSheet: View {
                 } header: {
                     Text("Add new exercise")
                 } footer: {
-                    Text("Strength: weight, reps, series. Distance: km + indoor/outdoor. Reps only: just repetitions (e.g. Push-ups, Pull-ups).")
+                    Text("Strength: weight, reps, series. Distance: km + indoor/outdoor. Reps only: repetitions and series (e.g. Push-ups, Pull-ups).")
                 }
 
                 Section {

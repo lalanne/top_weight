@@ -35,7 +35,7 @@ struct RecordView: View {
         if isDistanceExercise {
             return distance > 0
         } else if isRepsOnlyExercise {
-            return reps > 0
+            return reps > 0 && series > 0
         } else {
             return weight > 0 && reps > 0 && series > 0
         }
@@ -168,7 +168,7 @@ struct RecordView: View {
             StepperField(
                 title: "Distance (km)",
                 value: $distance,
-                step: 0.5,
+                step: 0.1,
                 range: 0...100,
                 format: "%.1f"
             )
@@ -196,6 +196,16 @@ struct RecordView: View {
                 ),
                 step: 1,
                 range: 1...999,
+                format: "%.0f"
+            )
+            StepperField(
+                title: "Series",
+                value: Binding(
+                    get: { Double(series) },
+                    set: { series = max(1, min(50, Int($0))) }
+                ),
+                step: 1,
+                range: 1...50,
                 format: "%.0f"
             )
         }
@@ -268,6 +278,7 @@ struct RecordView: View {
             isIndoor = false
         } else if exercise.isRepsOnlyType {
             reps = 1
+            series = 1
         } else {
             weight = 0
             reps = 10
@@ -289,6 +300,7 @@ struct RecordView: View {
                 isIndoor = false
             } else if exercise.isRepsOnlyType {
                 reps = 1
+                series = 1
             } else {
                 weight = 0
                 reps = 10
@@ -309,9 +321,9 @@ struct RecordView: View {
                 user: user, exercise: exercise
             )
         } else if isRepsOnlyExercise {
-            guard reps > 0 else { return }
+            guard reps > 0, series > 0 else { return }
             record = WorkoutRecord(
-                weight: 0, reps: reps, series: 0,
+                weight: 0, reps: reps, series: series,
                 user: user, exercise: exercise
             )
         } else {
@@ -428,7 +440,9 @@ struct StepperField: View {
                 } label: {
                     Image(systemName: "minus.circle.fill")
                         .font(.title2)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 .disabled(value <= range.lowerBound)
                 .accessibilityLabel("Decrease \(title)")
                 Text(String(format: format, value))
@@ -442,7 +456,9 @@ struct StepperField: View {
                 } label: {
                     Image(systemName: "plus.circle.fill")
                         .font(.title2)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 .disabled(value >= range.upperBound)
                 .accessibilityLabel("Increase \(title)")
             }

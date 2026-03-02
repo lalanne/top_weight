@@ -4,6 +4,7 @@ import SwiftData
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \WorkoutRecord.date, order: .reverse) private var records: [WorkoutRecord]
+    @State private var recordToEdit: WorkoutRecord?
 
     private var groupedRecords: [(String, [WorkoutRecord])] {
         let calendar = Calendar.current
@@ -27,7 +28,16 @@ struct HistoryView: View {
                             Section(sectionTitle) {
                                 ForEach(sectionRecords, id: \.id) { record in
                                     HistoryRow(record: record)
+                                        .contentShape(Rectangle())
+                                        .onTapGesture {
+                                            recordToEdit = record
+                                        }
                                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                            Button {
+                                                recordToEdit = record
+                                            } label: {
+                                                Label("Edit", systemImage: "pencil")
+                                            }
                                             Button(role: .destructive) {
                                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                                 modelContext.delete(record)
@@ -44,6 +54,11 @@ struct HistoryView: View {
                 }
             }
             .navigationTitle("History")
+            .sheet(item: $recordToEdit) { record in
+                EditWorkoutSheet(record: record) {
+                    recordToEdit = nil
+                }
+            }
         }
     }
 
@@ -106,7 +121,11 @@ struct HistoryRow: View {
             let location = (record.isIndoor == true) ? "indoors" : "outdoors"
             return String(format: "%.1f km, %@", dist, location)
         } else if record.exercise?.isRepsOnlyType == true {
-            return "\(record.reps) reps"
+            if record.series > 0 {
+                return "\(record.reps) reps × \(record.series) series"
+            } else {
+                return "\(record.reps) reps"
+            }
         } else {
             return "\(Int(record.weight)) kg × \(record.reps) reps × \(record.series) series"
         }

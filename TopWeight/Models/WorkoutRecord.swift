@@ -41,3 +41,5 @@ final class WorkoutRecord {
         self.exercise = exercise
     }
 }
+
+extension WorkoutRecord: Identifiable {}
