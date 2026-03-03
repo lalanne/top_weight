@@ -7,6 +7,6 @@ struct TopWeightApp: App {
         WindowGroup {
             MainTabView()
         }
-        .modelContainer(for: [User.self, Exercise.self, WorkoutRecord.self])
+        .modelContainer(for: [User.self, Exercise.self, WorkoutRecord.self, PersonalBest.self])
     }
 }

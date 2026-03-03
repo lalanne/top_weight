@@ -19,8 +19,8 @@ enum PresetAvatar: String, CaseIterable {
 struct AvatarPickerView: View {
     @Binding var selectedSymbol: String?
     let onPhotoPicked: (Data) -> Void
-    @State private var showImagePicker = false
-    @State private var useCamera = false
+    @State private var showCamera = false
+    @State private var showPhotoLibrary = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -54,8 +54,15 @@ struct AvatarPickerView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showImagePicker) {
-            ImagePicker(sourceType: useCamera ? .camera : .photoLibrary) { data in
+        .fullScreenCover(isPresented: $showCamera) {
+            ImagePicker(sourceType: .camera) { data in
+                onPhotoPicked(data)
+                selectedSymbol = nil
+            }
+            .ignoresSafeArea()
+        }
+        .fullScreenCover(isPresented: $showPhotoLibrary) {
+            PhotoLibraryPicker { data in
                 onPhotoPicked(data)
                 selectedSymbol = nil
             }
@@ -67,15 +74,13 @@ struct AvatarPickerView: View {
         Group {
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 Button {
-                    useCamera = true
-                    showImagePicker = true
+                    showCamera = true
                 } label: {
                     Label("Take photo", systemImage: "camera.fill")
                 }
             }
             Button {
-                useCamera = false
-                showImagePicker = true
+                showPhotoLibrary = true
             } label: {
                 Label("Choose photo", systemImage: "photo.on.rectangle")
             }

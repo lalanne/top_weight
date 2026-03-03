@@ -245,10 +245,19 @@ struct EditUserSheet: View {
                         guard !trimmed.isEmpty else { return }
                         user.name = trimmed
                         user.avatarSymbol = selectedAvatarSymbol
+                        if selectedAvatarSymbol != nil {
+                            user.photoData = nil
+                        }
                         try? modelContext.save()
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         onDismiss()
                     }
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+            .onChange(of: selectedAvatarSymbol) { _, newValue in
+                if newValue != nil {
+                    user.photoData = nil
                 }
             }
             .alert("Delete user?", isPresented: $showDeleteUserConfirmation) {

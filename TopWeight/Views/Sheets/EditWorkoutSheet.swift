@@ -162,6 +162,10 @@ struct EditWorkoutSheet: View {
             record.isIndoor = nil
         }
         try? modelContext.save()
+        if let user = record.user, let exercise = record.exercise {
+            PersonalBest.recompute(modelContext: modelContext, user: user, exercise: exercise)
+            try? modelContext.save()
+        }
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
 }

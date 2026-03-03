@@ -15,6 +15,7 @@ struct RecordView: View {
     @State private var isIndoor: Bool = false
     @State private var showUserSheet = false
     @State private var showExerciseSheet = false
+    @State private var userToEdit: User?
     @State private var showSavedFeedback = false
     @State private var showSaveError = false
 
@@ -64,6 +65,11 @@ struct RecordView: View {
             .sheet(isPresented: $showExerciseSheet) {
                 ExerciseManagerSheet()
             }
+            .sheet(item: $userToEdit) { user in
+                EditUserSheet(user: user) {
+                    userToEdit = nil
+                }
+            }
             .alert("Could not save", isPresented: $showSaveError) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -84,6 +90,13 @@ struct RecordView: View {
                             isSelected: selectedUser?.id == user.id,
                             action: { selectUser(user) }
                         )
+                        .contextMenu {
+                            Button {
+                                userToEdit = user
+                            } label: {
+                                Label("Edit profile", systemImage: "pencil")
+                            }
+                        }
                     }
                     AddChip(title: "Add user", action: { showUserSheet = true })
                 }
@@ -337,6 +350,8 @@ struct RecordView: View {
 
         do {
             try modelContext.save()
+            PersonalBest.recompute(modelContext: modelContext, user: user, exercise: exercise)
+            try? modelContext.save()
             let generator = UIImpactFeedbackGenerator(style: .medium)
             generator.impactOccurred()
             withAnimation {

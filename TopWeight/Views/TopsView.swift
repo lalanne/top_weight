@@ -1,0 +1,97 @@
+import SwiftUI
+import SwiftData
+
+struct TopsView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \PersonalBest.topWeight, order: .reverse) private var personalBests: [PersonalBest]
+
+    private var groupedByUser: [(User, [PersonalBest])] {
+        let grouped = Dictionary(grouping: personalBests) { pb in
+            pb.user?.id ?? UUID()
+        }
+        return grouped.compactMap { _, pbs in
+            guard let user = pbs.first?.user else { return nil }
+            let sorted = pbs.sorted { ($0.exercise?.name ?? "") < ($1.exercise?.name ?? "") }
+            return (user, sorted)
+        }
+        .sorted { ($0.0.name) < ($1.0.name) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if personalBests.isEmpty {
+                    emptyState
+                } else {
+                    List {
+                        ForEach(groupedByUser, id: \.0.id) { user, pbs in
+                            Section {
+                                ForEach(pbs.filter { $0.exercise != nil }, id: \.exercise!.id) { pb in
+                                    TopsRow(personalBest: pb, exercise: pb.exercise!)
+                                }
+                            } header: {
+                                HStack {
+                                    UserAvatarView(user: user, size: 28)
+                                    Text(user.name)
+                                        .font(.headline)
+                                }
+                            }
+                        }
+                    }
+                    .listStyle(.insetGrouped)
+                }
+            }
+            .navigationTitle("Tops")
+            .onAppear {
+                PersonalBest.migrateFromExistingRecords(modelContext: modelContext)
+            }
+        }
+    }
+
+    private var emptyState: some View {
+        ContentUnavailableView(
+            "No personal bests yet",
+            systemImage: "trophy.fill",
+            description: Text("Record workouts to see your top weights, reps, and distances here.")
+        )
+        .accessibilityLabel("No personal bests yet. Record workouts to see your tops.")
+    }
+}
+
+struct TopsRow: View {
+    let personalBest: PersonalBest
+    let exercise: Exercise
+
+    private var detailText: String {
+        if exercise.isDistanceType {
+            if let dist = personalBest.topDistance {
+                return String(format: "%.1f km", dist)
+            }
+            return "—"
+        } else if exercise.isRepsOnlyType {
+            return "\(personalBest.topReps) reps × \(personalBest.topSeries) series"
+        } else {
+            return "\(Int(personalBest.topWeight)) kg × \(personalBest.topReps) reps × \(personalBest.topSeries) series"
+        }
+    }
+
+    var body: some View {
+        HStack {
+            Text(exercise.name)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Spacer()
+            Text(detailText)
+                .font(.subheadline)
+                .fontWeight(.medium)
+        }
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(exercise.name), \(detailText)")
+    }
+}
+
+#Preview {
+    TopsView()
+        .modelContainer(for: [User.self, Exercise.self, WorkoutRecord.self, PersonalBest.self], inMemory: true)
+}

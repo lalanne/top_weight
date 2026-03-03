@@ -12,6 +12,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         picker.delegate = context.coordinator
         picker.allowsEditing = true
         picker.modalPresentationStyle = .fullScreen
+        picker.cameraCaptureMode = .photo
         return picker
     }
 
@@ -33,11 +34,15 @@ struct ImagePicker: UIViewControllerRepresentable {
             if let image, let data = image.jpegData(compressionQuality: 0.7) {
                 parent.onImagePicked(data)
             }
-            parent.dismiss()
+            DispatchQueue.main.async {
+                self.parent.dismiss()
+            }
         }
 
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            parent.dismiss()
+            DispatchQueue.main.async {
+                self.parent.dismiss()
+            }
         }
     }
 }

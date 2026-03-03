@@ -40,8 +40,15 @@ struct HistoryView: View {
                                             }
                                             Button(role: .destructive) {
                                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                                modelContext.delete(record)
-                                                try? modelContext.save()
+                                                if let user = record.user, let exercise = record.exercise {
+                                                    modelContext.delete(record)
+                                                    try? modelContext.save()
+                                                    PersonalBest.recompute(modelContext: modelContext, user: user, exercise: exercise)
+                                                    try? modelContext.save()
+                                                } else {
+                                                    modelContext.delete(record)
+                                                    try? modelContext.save()
+                                                }
                                             } label: {
                                                 Label("Delete", systemImage: "trash")
                                             }
