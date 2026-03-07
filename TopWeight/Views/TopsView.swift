@@ -77,19 +77,34 @@ struct TopsRow: View {
         }
     }
 
+    private var dateText: String? {
+        guard let date = personalBest.topDate else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: date)
+    }
+
     var body: some View {
-        HStack {
-            Text(exercise.name)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Spacer()
-            Text(detailText)
-                .font(.subheadline)
-                .fontWeight(.medium)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(exercise.name)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text(detailText)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+            }
+            if let dateText {
+                Text(dateText)
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(exercise.name), \(detailText)")
+        .accessibilityLabel("\(exercise.name), \(detailText)\(dateText.map { ", \($0)" } ?? "")")
     }
 }
 

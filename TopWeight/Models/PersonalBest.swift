@@ -37,12 +37,13 @@ final class PersonalBest {
         }
 
         if exercise.isDistanceType {
-            let topDistance = records.compactMap(\.distance).max() ?? 0
+            let best = records.max(by: { ($0.distance ?? 0) < ($1.distance ?? 0) })
             upsert(modelContext: modelContext, user: user, exercise: exercise) { pb in
                 pb.topWeight = 0
                 pb.topReps = 0
                 pb.topSeries = 0
-                pb.topDistance = topDistance
+                pb.topDistance = best?.distance ?? 0
+                pb.topDate = best?.date
             }
         } else if exercise.isRepsOnlyType {
             let best = records.max(by: { ($0.reps * $0.series) < ($1.reps * $1.series) })
@@ -51,6 +52,7 @@ final class PersonalBest {
                 pb.topReps = best?.reps ?? 0
                 pb.topSeries = best?.series ?? 0
                 pb.topDistance = nil
+                pb.topDate = best?.date
             }
         } else {
             let best = records.max(by: {
@@ -61,6 +63,7 @@ final class PersonalBest {
                 pb.topReps = best?.reps ?? 0
                 pb.topSeries = best?.series ?? 0
                 pb.topDistance = nil
+                pb.topDate = best?.date
             }
         }
         try? modelContext.save()
@@ -118,6 +121,7 @@ final class PersonalBest {
     var topSeries: Int = 0
     /// For distance exercises: top distance in km.
     var topDistance: Double?
+    var topDate: Date?
 
     init(
         user: User? = nil,
@@ -125,7 +129,8 @@ final class PersonalBest {
         topWeight: Double = 0,
         topReps: Int = 0,
         topSeries: Int = 0,
-        topDistance: Double? = nil
+        topDistance: Double? = nil,
+        topDate: Date? = nil
     ) {
         self.user = user
         self.exercise = exercise
@@ -133,5 +138,6 @@ final class PersonalBest {
         self.topReps = topReps
         self.topSeries = topSeries
         self.topDistance = topDistance
+        self.topDate = topDate
     }
 }
