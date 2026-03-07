@@ -69,16 +69,18 @@ final class PersonalBest {
         try? modelContext.save()
     }
 
-    /// One-time migration: populate PersonalBests from existing WorkoutRecords.
+    /// Populate or repair PersonalBests from existing WorkoutRecords.
+    /// Runs a full recompute when no PersonalBests exist or any have a nil topDate.
     static func migrateFromExistingRecords(modelContext: ModelContext) {
         let recordsDescriptor = FetchDescriptor<WorkoutRecord>()
         let pbDescriptor = FetchDescriptor<PersonalBest>()
-        guard
-            let records = try? modelContext.fetch(recordsDescriptor),
-            let existingCount = try? modelContext.fetchCount(pbDescriptor),
-            !records.isEmpty,
-            existingCount == 0
+        guard let records = try? modelContext.fetch(recordsDescriptor),
+              !records.isEmpty
         else { return }
+
+        let existingPBs = (try? modelContext.fetch(pbDescriptor)) ?? []
+        let needsRepair = existingPBs.isEmpty || existingPBs.contains(where: { $0.topDate == nil })
+        guard needsRepair else { return }
 
         var seen = Set<String>()
         for record in records {
