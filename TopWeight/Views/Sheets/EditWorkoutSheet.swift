@@ -14,7 +14,7 @@ struct EditWorkoutSheet: View {
 
     private var isDistanceEntry: Bool { record.exercise?.isDistanceType == true }
     private var isRepsOnlyEntry: Bool { record.exercise?.isRepsOnlyType == true }
-    private let weightStep: Double = 2.5
+    private let weightStep: Double = 0.5
 
     init(record: WorkoutRecord, onDismiss: @escaping () -> Void) {
         self.record = record

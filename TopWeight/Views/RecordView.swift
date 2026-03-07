@@ -21,7 +21,7 @@ struct RecordView: View {
 
     private let lastUserIDKey = "lastSelectedUserID"
     private let lastExerciseIDKey = "lastSelectedExerciseID"
-    private let weightStep: Double = 2.5
+    private let weightStep: Double = 0.5
 
     private var isDistanceExercise: Bool {
         selectedExercise?.isDistanceType == true
@@ -443,6 +443,10 @@ struct StepperField: View {
     let range: ClosedRange<Double>
     let format: String
 
+    @State private var isEditing = false
+    @State private var editText = ""
+    @FocusState private var isFocused: Bool
+
     var body: some View {
         HStack {
             Text(title)
@@ -460,11 +464,33 @@ struct StepperField: View {
                 .buttonStyle(.plain)
                 .disabled(value <= range.lowerBound)
                 .accessibilityLabel("Decrease \(title)")
-                Text(String(format: format, value))
-                    .font(.title)
-                    .fontWeight(.semibold)
-                    .frame(minWidth: 60, alignment: .center)
-                    .accessibilityLabel("\(title): \(String(format: format, value))")
+
+                if isEditing {
+                    TextField("", text: $editText)
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .frame(minWidth: 60, alignment: .center)
+                        .multilineTextAlignment(.center)
+                        .keyboardType(.decimalPad)
+                        .focused($isFocused)
+                        .onSubmit { commitEdit() }
+                        .onChange(of: isFocused) { _, focused in
+                            if !focused { commitEdit() }
+                        }
+                        .onAppear { isFocused = true }
+                } else {
+                    Text(String(format: format, value))
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .frame(minWidth: 60, alignment: .center)
+                        .accessibilityLabel("\(title): \(String(format: format, value))")
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            editText = String(format: format, value)
+                            isEditing = true
+                        }
+                }
+
                 Button {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     value = min(range.upperBound, value + step)
@@ -478,6 +504,13 @@ struct StepperField: View {
                 .accessibilityLabel("Increase \(title)")
             }
         }
+    }
+
+    private func commitEdit() {
+        if let parsed = Double(editText) {
+            value = min(range.upperBound, max(range.lowerBound, parsed))
+        }
+        isEditing = false
     }
 }
 
