@@ -45,22 +45,21 @@ final class PersonalBest {
                 pb.topDistance = topDistance
             }
         } else if exercise.isRepsOnlyType {
-            let topReps = records.map(\.reps).max() ?? 0
-            let topSeries = records.map(\.series).max() ?? 0
+            let best = records.max(by: { ($0.reps * $0.series) < ($1.reps * $1.series) })
             upsert(modelContext: modelContext, user: user, exercise: exercise) { pb in
                 pb.topWeight = 0
-                pb.topReps = topReps
-                pb.topSeries = topSeries
+                pb.topReps = best?.reps ?? 0
+                pb.topSeries = best?.series ?? 0
                 pb.topDistance = nil
             }
         } else {
-            let topWeight = records.map(\.weight).max() ?? 0
-            let topReps = records.map(\.reps).max() ?? 0
-            let topSeries = records.map(\.series).max() ?? 0
+            let best = records.max(by: {
+                ($0.weight * Double($0.reps * $0.series)) < ($1.weight * Double($1.reps * $1.series))
+            })
             upsert(modelContext: modelContext, user: user, exercise: exercise) { pb in
-                pb.topWeight = topWeight
-                pb.topReps = topReps
-                pb.topSeries = topSeries
+                pb.topWeight = best?.weight ?? 0
+                pb.topReps = best?.reps ?? 0
+                pb.topSeries = best?.series ?? 0
                 pb.topDistance = nil
             }
         }

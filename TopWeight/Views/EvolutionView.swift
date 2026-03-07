@@ -32,17 +32,17 @@ struct EvolutionView: View {
         if exercise.isDistanceType {
             return { ($0.distance ?? 0) }
         } else if exercise.isRepsOnlyType {
-            return { Double($0.reps) }
+            return { Double($0.reps * $0.series) }
         } else {
-            return { $0.weight }
+            return { $0.weight * Double($0.reps * $0.series) }
         }
     }
 
     private var yAxisLabel: String {
         guard let exercise = selectedExercise else { return "" }
         if exercise.isDistanceType { return "km" }
-        if exercise.isRepsOnlyType { return "reps" }
-        return "kg"
+        if exercise.isRepsOnlyType { return "total reps" }
+        return "volume (kg)"
     }
 
     private var chartTitle: String {

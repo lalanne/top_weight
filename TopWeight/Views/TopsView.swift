@@ -69,9 +69,11 @@ struct TopsRow: View {
             }
             return "—"
         } else if exercise.isRepsOnlyType {
-            return "\(personalBest.topReps) reps × \(personalBest.topSeries) series"
+            let totalReps = personalBest.topReps * personalBest.topSeries
+            return "\(personalBest.topReps) reps × \(personalBest.topSeries) series = \(totalReps) total"
         } else {
-            return "\(Int(personalBest.topWeight)) kg × \(personalBest.topReps) reps × \(personalBest.topSeries) series"
+            let volume = personalBest.topWeight * Double(personalBest.topReps * personalBest.topSeries)
+            return "\(Int(personalBest.topWeight)) kg × \(personalBest.topReps) reps × \(personalBest.topSeries) series = \(Int(volume)) kg vol"
         }
     }
 
