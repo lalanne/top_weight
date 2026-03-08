@@ -507,7 +507,8 @@ struct StepperField: View {
     }
 
     private func commitEdit() {
-        if let parsed = Double(editText) {
+        let normalized = editText.replacingOccurrences(of: ",", with: ".")
+        if let parsed = Double(normalized) {
             value = min(range.upperBound, max(range.lowerBound, parsed))
         }
         isEditing = false
