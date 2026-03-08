@@ -323,6 +323,7 @@ struct RecordView: View {
     }
 
     private func saveRecord() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         guard let user = selectedUser, let exercise = selectedExercise else { return }
 
         let record: WorkoutRecord
