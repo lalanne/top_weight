@@ -13,6 +13,7 @@ struct RecordView: View {
     @State private var series: Int = 1
     @State private var distance: Double = 0
     @State private var isIndoor: Bool = false
+    @State private var seconds: Int = 0
     @State private var showUserSheet = false
     @State private var showExerciseSheet = false
     @State private var userToEdit: User?
@@ -31,10 +32,16 @@ struct RecordView: View {
         selectedExercise?.isRepsOnlyType == true
     }
 
+    private var isTimedExercise: Bool {
+        selectedExercise?.isTimedType == true
+    }
+
     private var canSave: Bool {
         guard selectedUser != nil, selectedExercise != nil else { return false }
         if isDistanceExercise {
             return distance > 0
+        } else if isTimedExercise {
+            return seconds > 0 && series > 0
         } else if isRepsOnlyExercise {
             return reps > 0 && series > 0
         } else {
@@ -134,6 +141,8 @@ struct RecordView: View {
 
             if isDistanceExercise {
                 distanceInputSection
+            } else if isTimedExercise {
+                timedInputSection
             } else if isRepsOnlyExercise {
                 repsOnlyInputSection
             } else {
@@ -226,11 +235,38 @@ struct RecordView: View {
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 
+    private var timedInputSection: some View {
+        VStack(spacing: 20) {
+            StepperField(
+                title: "Seconds",
+                value: Binding(
+                    get: { Double(seconds) },
+                    set: { seconds = max(0, Int($0)) }
+                ),
+                step: 1,
+                range: 0...3600,
+                format: "%.0f"
+            )
+            StepperField(
+                title: "Series",
+                value: Binding(
+                    get: { Double(series) },
+                    set: { series = max(1, min(50, Int($0))) }
+                ),
+                step: 1,
+                range: 1...50,
+                format: "%.0f"
+            )
+        }
+        .padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+    }
+
     private var saveButton: some View {
         Button(action: saveRecord) {
             HStack {
                 Image(systemName: "checkmark.circle.fill")
-                Text(isDistanceExercise || isRepsOnlyExercise ? "Save" : "Save workout")
+                Text(isDistanceExercise || isRepsOnlyExercise || isTimedExercise ? "Save" : "Save workout")
                     .fontWeight(.semibold)
             }
             .frame(maxWidth: .infinity)
@@ -289,6 +325,9 @@ struct RecordView: View {
         if exercise.isDistanceType {
             distance = 0
             isIndoor = false
+        } else if exercise.isTimedType {
+            seconds = 0
+            series = 1
         } else if exercise.isRepsOnlyType {
             reps = 1
             series = 1
@@ -311,6 +350,9 @@ struct RecordView: View {
             if exercise.isDistanceType {
                 distance = 0
                 isIndoor = false
+            } else if exercise.isTimedType {
+                seconds = 0
+                series = 1
             } else if exercise.isRepsOnlyType {
                 reps = 1
                 series = 1
@@ -332,6 +374,13 @@ struct RecordView: View {
             record = WorkoutRecord(
                 weight: 0, reps: 0, series: 0,
                 distance: distance, isIndoor: isIndoor,
+                user: user, exercise: exercise
+            )
+        } else if isTimedExercise {
+            guard seconds > 0, series > 0 else { return }
+            record = WorkoutRecord(
+                weight: 0, reps: 0, series: series,
+                seconds: seconds,
                 user: user, exercise: exercise
             )
         } else if isRepsOnlyExercise {

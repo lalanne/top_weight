@@ -11,9 +11,11 @@ struct EditWorkoutSheet: View {
     @State private var series: Int
     @State private var distance: Double
     @State private var isIndoor: Bool
+    @State private var seconds: Int
 
     private var isDistanceEntry: Bool { record.exercise?.isDistanceType == true }
     private var isRepsOnlyEntry: Bool { record.exercise?.isRepsOnlyType == true }
+    private var isTimedEntry: Bool { record.exercise?.isTimedType == true }
     private let weightStep: Double = 0.5
 
     init(record: WorkoutRecord, onDismiss: @escaping () -> Void) {
@@ -24,11 +26,14 @@ struct EditWorkoutSheet: View {
         self._series = State(initialValue: record.exercise?.isRepsOnlyType == true && record.series == 0 ? 1 : max(1, record.series))
         self._distance = State(initialValue: record.distance ?? 0)
         self._isIndoor = State(initialValue: record.isIndoor ?? false)
+        self._seconds = State(initialValue: record.seconds ?? 0)
     }
 
     private var canSave: Bool {
         if isDistanceEntry {
             return distance > 0
+        } else if isTimedEntry {
+            return seconds > 0 && series > 0
         } else if isRepsOnlyEntry {
             return reps > 0 && series > 0
         } else {
@@ -68,6 +73,27 @@ struct EditWorkoutSheet: View {
                             Text("Outdoors").tag(false)
                             Text("Indoors").tag(true)
                         }
+                    } else if isTimedEntry {
+                        StepperField(
+                            title: "Seconds",
+                            value: Binding(
+                                get: { Double(seconds) },
+                                set: { seconds = max(0, Int($0)) }
+                            ),
+                            step: 1,
+                            range: 0...3600,
+                            format: "%.0f"
+                        )
+                        StepperField(
+                            title: "Series",
+                            value: Binding(
+                                get: { Double(series) },
+                                set: { series = max(1, min(50, Int($0))) }
+                            ),
+                            step: 1,
+                            range: 1...50,
+                            format: "%.0f"
+                        )
                     } else if isRepsOnlyEntry {
                         StepperField(
                             title: "Repetitions",
@@ -148,18 +174,28 @@ struct EditWorkoutSheet: View {
             record.weight = 0
             record.reps = 0
             record.series = 0
+            record.seconds = nil
+        } else if isTimedEntry {
+            record.seconds = seconds
+            record.series = series
+            record.weight = 0
+            record.reps = 0
+            record.distance = nil
+            record.isIndoor = nil
         } else if isRepsOnlyEntry {
             record.reps = reps
             record.series = series
             record.weight = 0
             record.distance = nil
             record.isIndoor = nil
+            record.seconds = nil
         } else {
             record.weight = weight
             record.reps = reps
             record.series = series
             record.distance = nil
             record.isIndoor = nil
+            record.seconds = nil
         }
         try? modelContext.save()
         if let user = record.user, let exercise = record.exercise {

@@ -20,6 +20,7 @@ struct ExerciseManagerSheet: View {
                         Text("Strength").tag(ExerciseType.strength)
                         Text("Distance").tag(ExerciseType.distance)
                         Text("Reps only").tag(ExerciseType.repsOnly)
+                        Text("Timed").tag(ExerciseType.timed)
                     }
                     .pickerStyle(.menu)
                     Button("Add") {
@@ -29,7 +30,7 @@ struct ExerciseManagerSheet: View {
                 } header: {
                     Text("Add new exercise")
                 } footer: {
-                    Text("Strength: weight, reps, series. Distance: km + indoor/outdoor. Reps only: repetitions and series (e.g. Push-ups, Pull-ups).")
+                    Text("Strength: weight, reps, series. Distance: km + indoor/outdoor. Reps only: repetitions and series. Timed: seconds and series (e.g. Dead Hangs, Planks).")
                 }
 
                 Section {
@@ -90,6 +91,7 @@ struct ExerciseManagerSheet: View {
         case .strength: return "Strength"
         case .distance: return "Distance"
         case .repsOnly: return "Reps only"
+        case .timed: return "Timed"
         }
     }
 
@@ -132,6 +134,7 @@ struct EditExerciseSheet: View {
                     Text("Strength").tag(ExerciseType.strength)
                     Text("Distance").tag(ExerciseType.distance)
                     Text("Reps only").tag(ExerciseType.repsOnly)
+                    Text("Timed").tag(ExerciseType.timed)
                 }
                 .pickerStyle(.menu)
             }

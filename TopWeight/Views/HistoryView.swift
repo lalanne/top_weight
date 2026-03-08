@@ -127,6 +127,8 @@ struct HistoryRow: View {
         if record.isDistanceEntry, let dist = record.distance {
             let location = (record.isIndoor == true) ? "indoors" : "outdoors"
             return String(format: "%.1f km, %@", dist, location)
+        } else if record.exercise?.isTimedType == true, let secs = record.seconds {
+            return "\(secs)s × \(record.series) series"
         } else if record.exercise?.isRepsOnlyType == true {
             if record.series > 0 {
                 return "\(record.reps) reps × \(record.series) series"

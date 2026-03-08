@@ -68,6 +68,10 @@ struct TopsRow: View {
                 return String(format: "%.1f km", dist)
             }
             return "—"
+        } else if exercise.isTimedType {
+            let secs = personalBest.topSeconds ?? 0
+            let totalSecs = secs * personalBest.topSeries
+            return "\(secs)s × \(personalBest.topSeries) series = \(totalSecs)s total"
         } else if exercise.isRepsOnlyType {
             let totalReps = personalBest.topReps * personalBest.topSeries
             return "\(personalBest.topReps) reps × \(personalBest.topSeries) series = \(totalReps) total"

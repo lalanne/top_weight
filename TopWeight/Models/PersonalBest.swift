@@ -43,6 +43,19 @@ final class PersonalBest {
                 pb.topReps = 0
                 pb.topSeries = 0
                 pb.topDistance = best?.distance ?? 0
+                pb.topSeconds = nil
+                pb.topDate = best?.date
+            }
+        } else if exercise.isTimedType {
+            let best = records.max(by: {
+                (($0.seconds ?? 0) * $0.series) < (($1.seconds ?? 0) * $1.series)
+            })
+            upsert(modelContext: modelContext, user: user, exercise: exercise) { pb in
+                pb.topWeight = 0
+                pb.topReps = 0
+                pb.topSeries = best?.series ?? 0
+                pb.topDistance = nil
+                pb.topSeconds = best?.seconds
                 pb.topDate = best?.date
             }
         } else if exercise.isRepsOnlyType {
@@ -52,6 +65,7 @@ final class PersonalBest {
                 pb.topReps = best?.reps ?? 0
                 pb.topSeries = best?.series ?? 0
                 pb.topDistance = nil
+                pb.topSeconds = nil
                 pb.topDate = best?.date
             }
         } else {
@@ -63,6 +77,7 @@ final class PersonalBest {
                 pb.topReps = best?.reps ?? 0
                 pb.topSeries = best?.series ?? 0
                 pb.topDistance = nil
+                pb.topSeconds = nil
                 pb.topDate = best?.date
             }
         }
@@ -123,6 +138,8 @@ final class PersonalBest {
     var topSeries: Int = 0
     /// For distance exercises: top distance in km.
     var topDistance: Double?
+    /// For timed exercises: top seconds per set.
+    var topSeconds: Int?
     var topDate: Date?
 
     init(
@@ -132,6 +149,7 @@ final class PersonalBest {
         topReps: Int = 0,
         topSeries: Int = 0,
         topDistance: Double? = nil,
+        topSeconds: Int? = nil,
         topDate: Date? = nil
     ) {
         self.user = user
@@ -140,6 +158,7 @@ final class PersonalBest {
         self.topReps = topReps
         self.topSeries = topSeries
         self.topDistance = topDistance
+        self.topSeconds = topSeconds
         self.topDate = topDate
     }
 }
