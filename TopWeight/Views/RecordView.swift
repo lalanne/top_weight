@@ -89,47 +89,76 @@ struct RecordView: View {
     private var userSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             sectionHeader("User", addAction: { showUserSheet = true })
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(users, id: \.id) { user in
-                        UserChip(
-                            user: user,
-                            isSelected: selectedUser?.id == user.id,
-                            action: { selectUser(user) }
-                        )
-                        .contextMenu {
-                            Button {
-                                userToEdit = user
-                            } label: {
-                                Label("Edit profile", systemImage: "pencil")
+            VStack(spacing: 0) {
+                ForEach(users, id: \.id) { user in
+                    Button {
+                        selectUser(user)
+                    } label: {
+                        HStack(spacing: 10) {
+                            UserAvatarView(user: user, size: 28)
+                            Text(user.name)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            Spacer()
+                            if selectedUser?.id == user.id {
+                                Image(systemName: "checkmark")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.accentColor)
                             }
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(selectedUser?.id == user.id ? Color.accentColor.opacity(0.15) : Color.clear)
                     }
-                    AddChip(title: "Add user", action: { showUserSheet = true })
+                    .buttonStyle(.plain)
+                    .contextMenu {
+                        Button {
+                            userToEdit = user
+                        } label: {
+                            Label("Edit profile", systemImage: "pencil")
+                        }
+                    }
+                    if user.id != users.last?.id {
+                        Divider().padding(.leading, 16)
+                    }
                 }
-                .padding(.horizontal, 2)
             }
-            .frame(height: 48)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
         }
     }
 
     private var exerciseSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             sectionHeader("Exercise", addAction: { showExerciseSheet = true })
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(exercises, id: \.id) { exercise in
-                        ExerciseChip(
-                            exercise: exercise,
-                            isSelected: selectedExercise?.id == exercise.id,
-                            action: { selectExercise(exercise) }
-                        )
+            VStack(spacing: 0) {
+                ForEach(exercises, id: \.id) { exercise in
+                    Button {
+                        selectExercise(exercise)
+                    } label: {
+                        HStack {
+                            Text(exercise.name)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            Spacer()
+                            if selectedExercise?.id == exercise.id {
+                                Image(systemName: "checkmark")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.accentColor)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(selectedExercise?.id == exercise.id ? Color.accentColor.opacity(0.15) : Color.clear)
                     }
-                    AddChip(title: "Add exercise", action: { showExerciseSheet = true })
+                    .buttonStyle(.plain)
+                    if exercise.id != exercises.last?.id {
+                        Divider().padding(.leading, 16)
+                    }
                 }
-                .padding(.horizontal, 2)
             }
-            .frame(height: 48)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
         }
     }
 
