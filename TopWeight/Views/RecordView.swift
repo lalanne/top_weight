@@ -89,41 +89,26 @@ struct RecordView: View {
     private var userSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             sectionHeader("User", addAction: { showUserSheet = true })
-            VStack(spacing: 0) {
-                ForEach(users, id: \.id) { user in
-                    Button {
-                        selectUser(user)
-                    } label: {
-                        HStack(spacing: 10) {
-                            UserAvatarView(user: user, size: 28)
-                            Text(user.name)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            Spacer()
-                            if selectedUser?.id == user.id {
-                                Image(systemName: "checkmark")
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(Color.accentColor)
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(selectedUser?.id == user.id ? Color.accentColor.opacity(0.15) : Color.clear)
+            HStack {
+                if let user = selectedUser {
+                    UserAvatarView(user: user, size: 28)
+                }
+                Picker("Select user", selection: Binding(
+                    get: { selectedUser },
+                    set: { newUser in
+                        if let user = newUser { selectUser(user) }
                     }
-                    .buttonStyle(.plain)
-                    .contextMenu {
-                        Button {
-                            userToEdit = user
-                        } label: {
-                            Label("Edit profile", systemImage: "pencil")
-                        }
-                    }
-                    if user.id != users.last?.id {
-                        Divider().padding(.leading, 16)
+                )) {
+                    Text("None").tag(nil as User?)
+                    ForEach(users, id: \.id) { user in
+                        Text(user.name).tag(user as User?)
                     }
                 }
+                .pickerStyle(.menu)
+                .tint(.primary)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
         }
     }
@@ -131,33 +116,21 @@ struct RecordView: View {
     private var exerciseSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             sectionHeader("Exercise", addAction: { showExerciseSheet = true })
-            VStack(spacing: 0) {
+            Picker("Select exercise", selection: Binding(
+                get: { selectedExercise },
+                set: { newExercise in
+                    if let exercise = newExercise { selectExercise(exercise) }
+                }
+            )) {
+                Text("None").tag(nil as Exercise?)
                 ForEach(exercises, id: \.id) { exercise in
-                    Button {
-                        selectExercise(exercise)
-                    } label: {
-                        HStack {
-                            Text(exercise.name)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            Spacer()
-                            if selectedExercise?.id == exercise.id {
-                                Image(systemName: "checkmark")
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(Color.accentColor)
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(selectedExercise?.id == exercise.id ? Color.accentColor.opacity(0.15) : Color.clear)
-                    }
-                    .buttonStyle(.plain)
-                    if exercise.id != exercises.last?.id {
-                        Divider().padding(.leading, 16)
-                    }
+                    Text(exercise.name).tag(exercise as Exercise?)
                 }
             }
+            .pickerStyle(.menu)
+            .tint(.primary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
         }
     }
