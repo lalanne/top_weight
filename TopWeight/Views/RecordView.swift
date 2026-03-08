@@ -474,6 +474,12 @@ struct StepperField: View {
                         .keyboardType(.decimalPad)
                         .focused($isFocused)
                         .onSubmit { commitEdit() }
+                        .onChange(of: editText) { _, newText in
+                            let normalized = newText.replacingOccurrences(of: ",", with: ".")
+                            if let parsed = Double(normalized) {
+                                value = min(range.upperBound, max(range.lowerBound, parsed))
+                            }
+                        }
                         .onChange(of: isFocused) { _, focused in
                             if !focused { commitEdit() }
                         }
