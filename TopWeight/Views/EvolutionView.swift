@@ -103,29 +103,22 @@ struct EvolutionView: View {
                 .font(.caption)
                 .fontWeight(.medium)
                 .foregroundStyle(.secondary)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
+            HStack {
+                if let user = selectedUser {
+                    UserAvatarView(user: user, size: 28)
+                }
+                Picker("Select user", selection: $selectedUser) {
+                    Text("None").tag(nil as User?)
                     ForEach(usersWithRecords, id: \.id) { user in
-                        Button {
-                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                            selectedUser = user
-                        } label: {
-                            HStack(spacing: 8) {
-                                UserAvatarView(user: user, size: 28)
-                                Text(user.name)
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 10)
-                            .background(selectedUser?.id == user.id ? Color.accentColor.opacity(0.2) : Color.secondary.opacity(0.15), in: Capsule())
-                        }
-                        .buttonStyle(.plain)
+                        Text(user.name).tag(user as User?)
                     }
                 }
-                .padding(.horizontal, 2)
+                .pickerStyle(.menu)
+                .tint(.primary)
             }
-            .frame(height: 48)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
         }
     }
 
@@ -141,26 +134,17 @@ struct EvolutionView: View {
                     .foregroundStyle(.secondary)
                     .frame(height: 44)
             } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        ForEach(exercisesForSelectedUser, id: \.id) { exercise in
-                            Button {
-                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                selectedExercise = exercise
-                            } label: {
-                                Text(exercise.name)
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 10)
-                                    .background(selectedExercise?.id == exercise.id ? Color.accentColor.opacity(0.2) : Color.secondary.opacity(0.15), in: Capsule())
-                            }
-                            .buttonStyle(.plain)
-                        }
+                Picker("Select exercise", selection: $selectedExercise) {
+                    Text("None").tag(nil as Exercise?)
+                    ForEach(exercisesForSelectedUser, id: \.id) { exercise in
+                        Text(exercise.name).tag(exercise as Exercise?)
                     }
-                    .padding(.horizontal, 2)
                 }
-                .frame(height: 48)
+                .pickerStyle(.menu)
+                .tint(.primary)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
             }
         }
     }
