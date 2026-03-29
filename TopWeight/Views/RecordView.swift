@@ -19,6 +19,7 @@ struct RecordView: View {
     @State private var userToEdit: User?
     @State private var showSavedFeedback = false
     @State private var showSaveError = false
+    @State private var workoutDate = Date()
 
     private let lastUserIDKey = "lastSelectedUserID"
     private let lastExerciseIDKey = "lastSelectedExerciseID"
@@ -55,6 +56,7 @@ struct RecordView: View {
                 VStack(spacing: 24) {
                     userSection
                     exerciseSection
+                    dateSection
                     inputSection
                     saveButton
                 }
@@ -133,6 +135,26 @@ struct RecordView: View {
             .padding(.vertical, 10)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
         }
+    }
+
+    private var dateSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Date & time")
+                .font(.title2)
+                .fontWeight(.semibold)
+            DatePicker(
+                "When",
+                selection: $workoutDate,
+                in: ...Date(),
+                displayedComponents: [.date, .hourAndMinute]
+            )
+            .labelsHidden()
+            .datePickerStyle(.compact)
+        }
+        .padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Workout date and time")
     }
 
     private var inputSection: some View {
@@ -375,6 +397,7 @@ struct RecordView: View {
             guard distance > 0 else { return }
             record = WorkoutRecord(
                 weight: 0, reps: 0, series: 0,
+                date: workoutDate,
                 distance: distance, isIndoor: isIndoor,
                 user: user, exercise: exercise
             )
@@ -382,6 +405,7 @@ struct RecordView: View {
             guard seconds > 0, series > 0 else { return }
             record = WorkoutRecord(
                 weight: 0, reps: 0, series: series,
+                date: workoutDate,
                 seconds: seconds,
                 user: user, exercise: exercise
             )
@@ -389,12 +413,14 @@ struct RecordView: View {
             guard reps > 0, series > 0 else { return }
             record = WorkoutRecord(
                 weight: 0, reps: reps, series: series,
+                date: workoutDate,
                 user: user, exercise: exercise
             )
         } else {
             guard weight > 0, reps > 0, series > 0 else { return }
             record = WorkoutRecord(
                 weight: weight, reps: reps, series: series,
+                date: workoutDate,
                 user: user, exercise: exercise
             )
         }
@@ -414,6 +440,7 @@ struct RecordView: View {
                     showSavedFeedback = false
                 }
             }
+            workoutDate = Date()
         } catch {
             showSaveError = true
         }

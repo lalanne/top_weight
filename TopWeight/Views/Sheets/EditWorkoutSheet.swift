@@ -12,6 +12,7 @@ struct EditWorkoutSheet: View {
     @State private var distance: Double
     @State private var isIndoor: Bool
     @State private var seconds: Int
+    @State private var workoutDate: Date
 
     private var isDistanceEntry: Bool { record.exercise?.isDistanceType == true }
     private var isRepsOnlyEntry: Bool { record.exercise?.isRepsOnlyType == true }
@@ -27,6 +28,7 @@ struct EditWorkoutSheet: View {
         self._distance = State(initialValue: record.distance ?? 0)
         self._isIndoor = State(initialValue: record.isIndoor ?? false)
         self._seconds = State(initialValue: record.seconds ?? 0)
+        self._workoutDate = State(initialValue: record.date)
     }
 
     private var canSave: Bool {
@@ -56,6 +58,17 @@ struct EditWorkoutSheet: View {
                         .foregroundStyle(.secondary)
                 } header: {
                     Text("Workout")
+                }
+
+                Section {
+                    DatePicker(
+                        "Date & time",
+                        selection: $workoutDate,
+                        in: ...Date(),
+                        displayedComponents: [.date, .hourAndMinute]
+                    )
+                } header: {
+                    Text("When")
                 }
 
                 Section {
@@ -197,6 +210,7 @@ struct EditWorkoutSheet: View {
             record.isIndoor = nil
             record.seconds = nil
         }
+        record.date = workoutDate
         try? modelContext.save()
         if let user = record.user, let exercise = record.exercise {
             PersonalBest.recompute(modelContext: modelContext, user: user, exercise: exercise)
