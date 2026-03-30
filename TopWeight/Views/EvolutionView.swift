@@ -29,23 +29,11 @@ struct EvolutionView: View {
 
     private var chartValue: (WorkoutRecord) -> Double {
         guard let exercise = selectedExercise else { return { _ in 0 } }
-        if exercise.isDistanceType {
-            return { ($0.distance ?? 0) }
-        } else if exercise.isTimedType {
-            return { Double(($0.seconds ?? 0) * $0.series) }
-        } else if exercise.isRepsOnlyType {
-            return { Double($0.reps * $0.series) }
-        } else {
-            return { $0.weight * Double($0.reps * $0.series) }
-        }
+        return { exercise.chartMetricValue(for: $0) }
     }
 
     private var yAxisLabel: String {
-        guard let exercise = selectedExercise else { return "" }
-        if exercise.isDistanceType { return "km" }
-        if exercise.isTimedType { return "total seconds" }
-        if exercise.isRepsOnlyType { return "total reps" }
-        return "volume (kg)"
+        selectedExercise?.chartYAxisLabel ?? ""
     }
 
     private var chartTitle: String {

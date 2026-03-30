@@ -40,3 +40,20 @@ final class Exercise {
         self.createdAt = createdAt
     }
 }
+
+extension Exercise {
+    /// Metric used in evolution / comparison charts for a record of this exercise type.
+    func chartMetricValue(for record: WorkoutRecord) -> Double {
+        if isDistanceType { return record.distance ?? 0 }
+        if isTimedType { return Double((record.seconds ?? 0) * record.series) }
+        if isRepsOnlyType { return Double(record.reps * record.series) }
+        return record.weight * Double(record.reps * record.series)
+    }
+
+    var chartYAxisLabel: String {
+        if isDistanceType { return "km" }
+        if isTimedType { return "total seconds" }
+        if isRepsOnlyType { return "total reps" }
+        return "volume (kg)"
+    }
+}

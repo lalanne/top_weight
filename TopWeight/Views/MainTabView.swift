@@ -20,6 +20,10 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Evolution", systemImage: "chart.line.uptrend.xyaxis")
                 }
+            CompareEvolutionView()
+                .tabItem {
+                    Label("Compare", systemImage: "person.3")
+                }
         }
     }
 }
