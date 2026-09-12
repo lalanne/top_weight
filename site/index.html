@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Weight — Support</title>
+<style>
+  :root {
+    --paper: #f5f6f4;
+    --surface: #ffffff;
+    --ink: #14181c;
+    --ink-soft: #3a4148;
+    --muted: #5b6570;
+    --border: #dce1e3;
+    --accent: #3c5a73;
+    --accent-soft: #e4eaee;
+
+    --font-display: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14171b;
+      --surface: #191d22;
+      --ink: #e9ebec;
+      --ink-soft: #c7ccd0;
+      --muted: #8b96a0;
+      --border: #262b30;
+      --accent: #86adcb;
+      --accent-soft: #1f2c36;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 6rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .brand .mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #1e40af 0%, #0f172a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .brand .mark svg { display: block; }
+  .brand .name {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.15rem;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.9rem;
+  }
+
+  h1.title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.1rem, 4vw, 2.6rem);
+    line-height: 1.1;
+    margin: 0 0 0.75rem;
+    text-wrap: balance;
+  }
+
+  .dek {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    margin: 0 0 3rem;
+    max-width: 46ch;
+  }
+
+  section.faq {
+    padding: 1.75rem 0;
+    border-top: 1px solid var(--border);
+  }
+  section.faq:first-of-type { border-top: none; padding-top: 0; }
+
+  section.faq h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.15rem;
+    margin: 0 0 0.6rem;
+    text-wrap: balance;
+  }
+  section.faq p { margin: 0; max-width: 62ch; color: var(--ink-soft); }
+  section.faq p + p { margin-top: 0.75rem; }
+
+  .contact {
+    margin-top: 3rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 1.5rem 1.75rem;
+  }
+  .contact h2 {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.75rem;
+  }
+  .contact p { margin: 0; color: var(--ink-soft); }
+  .contact a { font-weight: 500; }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="brand">
+    <div class="mark" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 1024 1024">
+        <rect x="184" y="472" width="656" height="80" rx="40" fill="#93c5fd"/>
+        <circle cx="224" cy="512" r="110" fill="#bfdbfe"/>
+        <circle cx="224" cy="512" r="85" fill="none" stroke="#1e3a8a" stroke-width="12"/>
+        <circle cx="800" cy="512" r="110" fill="#bfdbfe"/>
+        <circle cx="800" cy="512" r="85" fill="none" stroke="#1e3a8a" stroke-width="12"/>
+      </svg>
+    </div>
+    <span class="name">Top Weight</span>
+  </div>
+
+  <p class="eyebrow">Support</p>
+  <h1 class="title">Questions about Top Weight</h1>
+  <p class="dek">Answers to the most common questions, and how to reach us if yours isn't here.</p>
+
+  <section class="faq">
+    <h2>How do I log a workout for myself and my kids in the same session?</h2>
+    <p>On the Record tab, pick a user from the top menu, fill in the set, and save. Switch to the next family member with one tap — the exercise you had selected stays the same, so you don't have to re-pick it for each person.</p>
+  </section>
+
+  <section class="faq">
+    <h2>Do I need an account to use the app?</h2>
+    <p>No. Top Weight works fully offline with no account at all — every profile, exercise, and workout is stored on your device. Creating a cloud account is entirely optional and only needed if you want your data backed up and restored on a new phone.</p>
+  </section>
+
+  <section class="faq">
+    <h2>How do I back up my data, or restore it on a new phone?</h2>
+    <p>Open the Users sheet (the "+" next to User on the Record tab) and go to <strong>Cloud Account</strong>. Creating an account there automatically uploads everything already on your device. Signing into that same account on a new phone restores it.</p>
+  </section>
+
+  <section class="faq">
+    <h2>How do I delete my account and cloud data?</h2>
+    <p>Users sheet → <strong>Cloud Account</strong> → <strong>Delete Account</strong>. This permanently removes your account and everything backed up to it. Workouts already stored on your phone aren't affected — they stay local unless you also delete them or uninstall the app.</p>
+  </section>
+
+  <section class="faq">
+    <h2>How do I edit or delete a logged workout?</h2>
+    <p>On the History tab, tap a row to edit it, or swipe left for edit/delete options.</p>
+  </section>
+
+  <div class="contact">
+    <h2>Still stuck?</h2>
+    <p>Email us at <a href="mailto:[your support email]">[your support email]</a> and we'll help.</p>
+  </div>
+
+  <footer>
+    <p>See also the <a href="/privacy-policy.html">Privacy Policy</a>.</p>
+  </footer>
+</div>
+</body>
+</html>

@@ -4,6 +4,8 @@ import SwiftData
 struct UserManagerSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(SyncService.self) private var syncService
+    @Environment(AuthService.self) private var authService
     @Query(sort: \User.createdAt, order: .reverse) private var users: [User]
 
     @State private var newUserName = ""
@@ -14,6 +16,7 @@ struct UserManagerSheet: View {
     @State private var showAddError = false
     @State private var showAddPhotoSheet = false
     @State private var showDeleteConfirmation = false
+    @State private var showAccountSheet = false
 
     var body: some View {
         NavigationStack {
@@ -98,6 +101,8 @@ struct UserManagerSheet: View {
                 } header: {
                     Text("Users")
                 }
+
+                cloudAccountSection
             }
             .navigationTitle("Users")
             .navigationBarTitleDisplayMode(.inline)
@@ -112,6 +117,9 @@ struct UserManagerSheet: View {
                 EditUserSheet(user: user) {
                     userToEdit = nil
                 }
+            }
+            .sheet(isPresented: $showAccountSheet) {
+                AccountSheet()
             }
             .sheet(isPresented: $showAddPhotoSheet) {
                 NavigationStack {
@@ -145,6 +153,7 @@ struct UserManagerSheet: View {
                 }
                 Button("Delete", role: .destructive) {
                     if let user = userToDelete {
+                        syncService.enqueueDelete(.profile, id: user.id)
                         modelContext.delete(user)
                         try? modelContext.save()
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -156,6 +165,36 @@ struct UserManagerSheet: View {
                     Text("Delete \(user.name)? This will also remove all their workout records.")
                 }
             }
+        }
+    }
+
+    private var cloudAccountSection: some View {
+        Section {
+            Button {
+                showAccountSheet = true
+            } label: {
+                HStack {
+                    Image(systemName: "icloud")
+                    if let email = authService.session?.user.email {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Signed in")
+                            Text(email)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        Text("Cloud Account")
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+            }
+        } header: {
+            Text("Backup")
+        } footer: {
+            Text("Create an account to back up profiles, exercises, and workouts to the cloud so you never lose them if you switch phones.")
         }
     }
 
@@ -172,6 +211,7 @@ struct UserManagerSheet: View {
 
         do {
             try modelContext.save()
+            syncService.enqueueUpsert(.profile, id: user.id)
             newUserName = ""
             newUserPhotoData = nil
             newUserAvatarSymbol = nil
@@ -184,6 +224,7 @@ struct UserManagerSheet: View {
 
 struct EditUserSheet: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(SyncService.self) private var syncService
     let user: User
     @State private var name: String
     @State private var selectedAvatarSymbol: String?
@@ -248,7 +289,9 @@ struct EditUserSheet: View {
                         if selectedAvatarSymbol != nil {
                             user.photoData = nil
                         }
+                        user.updatedAt = Date()
                         try? modelContext.save()
+                        syncService.enqueueUpsert(.profile, id: user.id)
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         onDismiss()
                     }
@@ -263,6 +306,7 @@ struct EditUserSheet: View {
             .alert("Delete user?", isPresented: $showDeleteUserConfirmation) {
                 Button("Cancel", role: .cancel) { }
                 Button("Delete", role: .destructive) {
+                    syncService.enqueueDelete(.profile, id: user.id)
                     modelContext.delete(user)
                     try? modelContext.save()
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()

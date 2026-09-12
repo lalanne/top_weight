@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Weight — Privacy Policy</title>
+<style>
+  :root {
+    --paper: #f5f6f4;
+    --surface: #ffffff;
+    --ink: #14181c;
+    --ink-soft: #3a4148;
+    --muted: #5b6570;
+    --border: #dce1e3;
+    --accent: #3c5a73;
+    --accent-soft: #e4eaee;
+    --note-bg: #fdf3dd;
+    --note-border: #e3c983;
+    --note-ink: #6b5017;
+
+    --font-display: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14171b;
+      --surface: #191d22;
+      --ink: #e9ebec;
+      --ink-soft: #c7ccd0;
+      --muted: #8b96a0;
+      --border: #262b30;
+      --accent: #86adcb;
+      --accent-soft: #1f2c36;
+      --note-bg: #2a2416;
+      --note-border: #5a4a20;
+      --note-ink: #e3c983;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .draft-note {
+    background: var(--note-bg);
+    border-bottom: 1px solid var(--note-border);
+    color: var(--note-ink);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+  }
+  .draft-note strong { text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .page {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 6rem;
+    display: grid;
+    grid-template-columns: 200px minmax(0, 700px);
+    gap: 3rem;
+    align-items: start;
+  }
+
+  header.masthead {
+    grid-column: 1 / -1;
+    margin-bottom: 1rem;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.9rem;
+  }
+
+  h1.title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.1rem, 4vw, 2.75rem);
+    line-height: 1.1;
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .dek {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    margin: 0 0 1.1rem;
+    max-width: 46ch;
+  }
+
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--muted);
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .meta span { white-space: nowrap; }
+
+  nav.toc {
+    position: sticky;
+    top: 2.5rem;
+    align-self: start;
+    border-left: 1px solid var(--border);
+    padding-left: 1rem;
+  }
+  nav.toc .toc-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+  }
+  nav.toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  nav.toc a {
+    text-decoration: none;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  nav.toc a:hover { color: var(--accent); }
+  nav.toc .num {
+    font-family: var(--font-mono);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  main { min-width: 0; }
+
+  .tldr {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 1.5rem 1.75rem;
+    margin: 0 0 3rem;
+  }
+  .tldr h2 {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 1rem;
+  }
+  .tldr ul { margin: 0; padding-left: 1.15rem; }
+  .tldr li { margin-bottom: 0.6rem; color: var(--ink-soft); }
+  .tldr li:last-child { margin-bottom: 0; }
+  .tldr strong { color: var(--ink); }
+
+  section.clause {
+    padding: 2.25rem 0;
+    border-top: 1px solid var(--border);
+    scroll-margin-top: 2rem;
+  }
+  section.clause:first-of-type { border-top: none; padding-top: 0; }
+
+  .clause h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.4rem;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.65rem;
+    text-wrap: balance;
+  }
+  .clause h2 .num {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .clause p { margin: 0 0 1rem; max-width: 66ch; color: var(--ink-soft); }
+  .clause p:last-child { margin-bottom: 0; }
+  .clause ul { margin: 0 0 1rem; padding-left: 1.2rem; max-width: 66ch; }
+  .clause li { margin-bottom: 0.5rem; color: var(--ink-soft); }
+
+  .fill {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 3px;
+    padding: 0.05em 0.4em;
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    white-space: nowrap;
+  }
+
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.25rem 0;
+    font-size: 0.92rem;
+  }
+  table.data th, table.data td {
+    text-align: left;
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.data th {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  table.data td { color: var(--ink-soft); }
+  .table-wrap { overflow-x: auto; }
+
+  .legal-note {
+    background: var(--note-bg);
+    border: 1px solid var(--note-border);
+    color: var(--note-ink);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    margin-top: 1.25rem;
+  }
+  .legal-note strong { display: block; margin-bottom: 0.3rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  footer.colophon {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  footer.colophon p { max-width: 66ch; margin: 0 0 0.6rem; }
+
+  @media (max-width: 860px) {
+    .page { grid-template-columns: 1fr; gap: 1.75rem; padding-top: 2.5rem; }
+    nav.toc {
+      position: static;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+    }
+    nav.toc ol { flex-direction: row; flex-wrap: wrap; column-gap: 1.1rem; row-gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="draft-note">
+  <strong>Draft note</strong> — starting point only, not legal advice. Fill in every <span class="fill">bracketed</span> placeholder and have this reviewed before publishing. Remove this banner once it's ready to host.
+</div>
+
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">Privacy Policy</p>
+    <h1 class="title">Top Weight</h1>
+    <p class="dek">How we handle your family's workout data — on your device, and if you turn it on, in the cloud.</p>
+    <div class="meta">
+      <span>Last updated: 17 Jul 2026</span>
+      <span>Version 1.0</span>
+      <span>Applies to: iOS app</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Sections">
+    <p class="toc-label">Sections</p>
+    <ol>
+      <li><a href="#collect"><span class="num">1</span> Information we collect</a></li>
+      <li><a href="#use"><span class="num">2</span> How we use it</a></li>
+      <li><a href="#storage"><span class="num">3</span> Where it's stored</a></li>
+      <li><a href="#choices"><span class="num">4</span> Your choices</a></li>
+      <li><a href="#children"><span class="num">5</span> Children's information</a></li>
+      <li><a href="#retention"><span class="num">6</span> Data retention</a></li>
+      <li><a href="#security"><span class="num">7</span> Security</a></li>
+      <li><a href="#changes"><span class="num">8</span> Changes to this policy</a></li>
+      <li><a href="#contact"><span class="num">9</span> Contact us</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="tldr">
+      <h2>The gist</h2>
+      <ul>
+        <li>Top Weight works fully offline by default. <strong>Nothing leaves your phone</strong> unless you turn on cloud backup.</li>
+        <li>Cloud backup is optional. Turning it on creates an account (email + password) and syncs your family's profiles, exercises, and workout history so a new phone can pick up where the old one left off.</li>
+        <li>We don't run ads, sell data, or use analytics or tracking SDKs.</li>
+        <li>You can permanently delete your cloud account and everything backed up to it, any time, right in the app.</li>
+      </ul>
+    </div>
+
+    <section class="clause" id="collect">
+      <h2><span class="num">1.</span> Information we collect</h2>
+      <p>What we collect depends entirely on whether you've turned on cloud backup. If you haven't, we collect nothing — the app has no server to send data to.</p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Data</th><th>When</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Email address &amp; password</td>
+              <td>Only if you create a cloud account</td>
+              <td>Password is handled by our authentication provider; we never see or store it in plain text.</td>
+            </tr>
+            <tr>
+              <td>Profile names &amp; avatar choice</td>
+              <td>Local always; cloud if backup is on</td>
+              <td>E.g. "Dad," "Mia" — whatever names you enter for the people you train with.</td>
+            </tr>
+            <tr>
+              <td>Exercise names &amp; types</td>
+              <td>Local always; cloud if backup is on</td>
+              <td>Strength, distance, reps-only, or timed.</td>
+            </tr>
+            <tr>
+              <td>Workout records</td>
+              <td>Local always; cloud if backup is on</td>
+              <td>Weight, reps, series, date, distance, indoor/outdoor, duration — whatever fields apply to the exercise.</td>
+            </tr>
+            <tr>
+              <td>Custom profile photos</td>
+              <td>Local only, always</td>
+              <td>Camera or photo library pictures never leave your device, even with cloud backup on.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>We don't collect location, contacts, browsing activity, advertising identifiers, or any device data beyond what's needed to run the app.</p>
+    </section>
+
+    <section class="clause" id="use">
+      <h2><span class="num">2.</span> How we use it</h2>
+      <p>The only reason we process anything beyond your device is to run cloud backup: signing you in, storing your family's records, and restoring them when you sign in on a new device. We don't use your information for advertising, profiling, or share it with data brokers.</p>
+    </section>
+
+    <section class="clause" id="storage">
+      <h2><span class="num">3.</span> Where it's stored</h2>
+      <p><strong style="color: var(--ink);">On your device:</strong> always, regardless of whether you have an account — Top Weight stores everything locally using Apple's on-device database.</p>
+      <p><strong style="color: var(--ink);">In the cloud:</strong> only if you create a cloud account. We use Supabase, a third-party database and authentication provider, to host that data. Access is restricted at the database level so that only your own account can ever read or write your family's rows — no other user or account can see your data.</p>
+    </section>
+
+    <section class="clause" id="choices">
+      <h2><span class="num">4.</span> Your choices</h2>
+      <ul>
+        <li><strong style="color: var(--ink);">Stay fully offline.</strong> Cloud backup is opt-in — the app is complete and permanent-storage-safe without ever creating an account.</li>
+        <li><strong style="color: var(--ink);">Access or export your data.</strong> Contact us at <span class="fill">[email]</span> and we'll help.</li>
+        <li><strong style="color: var(--ink);">Delete your account.</strong> In the app: <em>Cloud Account → Delete Account</em>. This permanently removes your account and everything backed up to it. Data still on your device isn't affected — uninstall the app to remove that too.</li>
+      </ul>
+    </section>
+
+    <section class="clause" id="children">
+      <h2><span class="num">5.</span> Children's information</h2>
+      <p>Top Weight is built for a parent or guardian to log workouts for themselves and their children under their own account. Children don't create separate accounts, sign in, or provide information to us directly — if you add your child's name and workout data, you're doing so as their guardian, within your account.</p>
+      <div class="legal-note">
+        <strong>Needs your review</strong>
+        This section is a starting point, not legal advice. Talk to a lawyer about children's-privacy laws (e.g. COPPA in the US, GDPR-K in the EU) for the regions <span class="fill">[your company]</span> plans to operate in before publishing this policy.
+      </div>
+    </section>
+
+    <section class="clause" id="retention">
+      <h2><span class="num">6.</span> Data retention</h2>
+      <p>Cloud data is retained until you delete your account or specific records. On-device data is retained until you delete it in the app or uninstall Top Weight.</p>
+    </section>
+
+    <section class="clause" id="security">
+      <h2><span class="num">7.</span> Security</h2>
+      <p>Data sent to the cloud is encrypted in transit. Database access is scoped per-account so only you can reach your family's rows. No method of transmission or storage is 100% secure, and we can't guarantee absolute security.</p>
+    </section>
+
+    <section class="clause" id="changes">
+      <h2><span class="num">8.</span> Changes to this policy</h2>
+      <p>If this policy changes, we'll update the date at the top of this page. Continuing to use Top Weight after a change means you accept the update.</p>
+    </section>
+
+    <section class="clause" id="contact">
+      <h2><span class="num">9.</span> Contact us</h2>
+      <p>Questions about this policy or your data: <span class="fill">[your contact email]</span></p>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <p><span class="fill">[Developer / company legal name]</span>, publisher of Top Weight for iOS.</p>
+    <p>This document is a template generated for Top Weight's App Store submission. Replace every bracketed placeholder above and remove the draft banner before hosting it publicly.</p>
+  </footer>
+</div>
+</body>
+</html>

@@ -3,6 +3,7 @@ import SwiftData
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(SyncService.self) private var syncService
     @Query(sort: \WorkoutRecord.date, order: .reverse) private var records: [WorkoutRecord]
     @State private var recordToEdit: WorkoutRecord?
 
@@ -40,6 +41,7 @@ struct HistoryView: View {
                                             }
                                             Button(role: .destructive) {
                                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                                syncService.enqueueDelete(.workoutRecord, id: record.id)
                                                 if let user = record.user, let exercise = record.exercise {
                                                     modelContext.delete(record)
                                                     try? modelContext.save()

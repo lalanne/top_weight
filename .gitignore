@@ -23,3 +23,6 @@ xcuserdata/
 
 # macOS
 .DS_Store
+
+# Cloudflare Pages
+.wrangler/

@@ -15,6 +15,8 @@ final class Exercise {
     var name: String
     var exerciseTypeRawValue: String = "strength"
     var createdAt: Date
+    /// Last local modification time. Drives last-write-wins cloud sync — touch on every edit.
+    var updatedAt: Date = Date()
 
     @Relationship(deleteRule: .cascade, inverse: \WorkoutRecord.exercise)
     var records: [WorkoutRecord] = []
@@ -32,12 +34,14 @@ final class Exercise {
         id: UUID = UUID(),
         name: String,
         exerciseType: ExerciseType = .strength,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        updatedAt: Date = Date()
     ) {
         self.id = id
         self.name = name
         self.exerciseTypeRawValue = exerciseType.rawValue
         self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }
 

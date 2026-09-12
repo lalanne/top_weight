@@ -36,11 +36,10 @@ struct PhotoLibraryPicker: UIViewControllerRepresentable {
             let provider = result.itemProvider
             guard provider.canLoadObject(ofClass: UIImage.self) else { return }
             provider.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
+                guard let image = object as? UIImage,
+                      let data = image.jpegData(compressionQuality: 0.7) else { return }
                 DispatchQueue.main.async {
-                    if let image = object as? UIImage,
-                       let data = image.jpegData(compressionQuality: 0.7) {
-                        self?.parent.onImagePicked(data)
-                    }
+                    self?.parent.onImagePicked(data)
                 }
             }
         }

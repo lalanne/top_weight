@@ -3,6 +3,7 @@ import SwiftData
 
 struct EditWorkoutSheet: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(SyncService.self) private var syncService
     let record: WorkoutRecord
     let onDismiss: () -> Void
 
@@ -211,11 +212,13 @@ struct EditWorkoutSheet: View {
             record.seconds = nil
         }
         record.date = workoutDate
+        record.updatedAt = Date()
         try? modelContext.save()
         if let user = record.user, let exercise = record.exercise {
             PersonalBest.recompute(modelContext: modelContext, user: user, exercise: exercise)
             try? modelContext.save()
         }
+        syncService.enqueueUpsert(.workoutRecord, id: record.id)
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
 }

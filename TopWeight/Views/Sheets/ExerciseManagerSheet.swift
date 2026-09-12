@@ -4,6 +4,7 @@ import SwiftData
 struct ExerciseManagerSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(SyncService.self) private var syncService
     @Query(sort: \Exercise.createdAt, order: .reverse) private var exercises: [Exercise]
 
     @State private var newExerciseName = ""
@@ -48,6 +49,7 @@ struct ExerciseManagerSheet: View {
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
+                                syncService.enqueueDelete(.exercise, id: exercise.id)
                                 modelContext.delete(exercise)
                                 try? modelContext.save()
                             } label: {
@@ -104,6 +106,7 @@ struct ExerciseManagerSheet: View {
 
         do {
             try modelContext.save()
+            syncService.enqueueUpsert(.exercise, id: exercise.id)
             newExerciseName = ""
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } catch {
@@ -114,6 +117,7 @@ struct ExerciseManagerSheet: View {
 
 struct EditExerciseSheet: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(SyncService.self) private var syncService
     let exercise: Exercise
     @State private var name: String
     @State private var exerciseType: ExerciseType
@@ -152,7 +156,9 @@ struct EditExerciseSheet: View {
                         guard !trimmed.isEmpty else { return }
                         exercise.name = trimmed
                         exercise.exerciseType = exerciseType
+                        exercise.updatedAt = Date()
                         try? modelContext.save()
+                        syncService.enqueueUpsert(.exercise, id: exercise.id)
                         onDismiss()
                     }
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)

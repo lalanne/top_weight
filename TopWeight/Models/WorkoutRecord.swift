@@ -8,6 +8,8 @@ final class WorkoutRecord {
     var reps: Int
     var series: Int
     var date: Date
+    /// Last local modification time. Drives last-write-wins cloud sync — touch on every edit.
+    var updatedAt: Date = Date()
 
     /// For distance exercises (Running, Cycling, Walking): distance in km.
     var distance: Double?
@@ -27,6 +29,7 @@ final class WorkoutRecord {
         reps: Int = 0,
         series: Int = 0,
         date: Date = Date(),
+        updatedAt: Date = Date(),
         distance: Double? = nil,
         isIndoor: Bool? = nil,
         seconds: Int? = nil,
@@ -38,6 +41,7 @@ final class WorkoutRecord {
         self.reps = reps
         self.series = series
         self.date = date
+        self.updatedAt = updatedAt
         self.distance = distance
         self.isIndoor = isIndoor
         self.seconds = seconds

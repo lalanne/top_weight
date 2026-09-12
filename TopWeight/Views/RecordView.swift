@@ -3,6 +3,7 @@ import SwiftData
 
 struct RecordView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(SyncService.self) private var syncService
     @Query(sort: \User.createdAt, order: .reverse) private var users: [User]
     @Query(sort: \Exercise.createdAt, order: .reverse) private var exercises: [Exercise]
 
@@ -430,6 +431,7 @@ struct RecordView: View {
             try modelContext.save()
             PersonalBest.recompute(modelContext: modelContext, user: user, exercise: exercise)
             try? modelContext.save()
+            syncService.enqueueUpsert(.workoutRecord, id: record.id)
             let generator = UIImpactFeedbackGenerator(style: .medium)
             generator.impactOccurred()
             withAnimation {
