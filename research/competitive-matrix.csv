@@ -1,0 +1,28 @@
+Criterion,Top Weight,Lyfta,CoupleFit,StrengthLog,Strong,HeySquad,WeTrain,Fitness Pact,FitRank,AdaptFit,FamBod,SportWise AI,MyBodyPro
+Product URL / notes,github README; iOS logger,lyfta.app (fitness; not rideshare),couple-fit.com,strengthlog.com,strongapp.io,heysquad.app,getwetrain.app,Fitness Pact App Store,fitrank.app,adaptfit App Store,fambod.com,sportwise.ai,mybodypro / youth performance
+Segment focus,Multi-person local gym log,Family + gym tracker,Couples train together,Strength training log,Popular gym log,Squad accountability,1:1 partner accountability,Group pacts + feed,Friend challenges,Family all ages + adaptive,Parent + baby fitness,Parent-guided child drills,Youth athlete analytics
+Multi-profile same device (one phone household),Yes,Unknown,No,No,No,No,No,No,No,Unknown,No,Unknown,Unknown
+Separate accounts per person typical,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
+Cloud sync / backup,No (roadmap),Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
+Works offline for core logging,Yes,Partial,Partial,Partial,Partial,Partial,Partial,Partial,Partial,Partial,Partial,Partial,Unknown
+Minimal taps friction positioning,Yes,Unknown,Unknown,Partial,Partial,No,No,No,No,No,No,No,No
+Strength: weight reps sets,Yes,Yes,Yes,Yes,Yes,Yes,Partial,Partial,Partial,Yes,Partial,Partial,Unknown
+Distance / cardio style logging,Yes,Yes,Unknown,Partial,Partial,Partial,Partial,Partial,Partial,Yes,No,Partial,Unknown
+Timed holds planks style,Yes,Unknown,Unknown,Partial,Partial,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
+Custom exercise names (not only library),Yes,Yes,Unknown,Yes,Yes,Partial,No,No,Partial,Unknown,Unknown,Unknown,Unknown
+Personal bests / PRs,Yes,Yes,Yes,Yes,Yes,Partial,Partial,Partial,Partial,Unknown,Unknown,Partial,Yes
+Progress charts over time,Yes,Yes,Yes,Yes,Yes,Partial,Partial,Partial,Partial,Yes,Unknown,Yes,Yes
+Social feed or squad,No,Partial,Partial,No,Partial,Yes,Partial,Yes,Yes,Unknown,No,Unknown,Unknown
+Train together same workout template,Partial (shared exercises manual),Yes,Yes,Yes,Yes,Partial,Partial,Partial,Partial,Yes,Yes,Yes,Unknown
+Parent read-only supervision dashboard,No,No,No,No,No,No,No,No,No,Unknown,No,Partial,Partial
+Photo or check-in proof,No,Unknown,Unknown,No,No,Yes,Yes,Yes,Partial,Unknown,Unknown,Unknown,Unknown
+Leaderboards competition,No,Partial,Partial,No,Partial,Yes,Partial,Yes,Yes,Unknown,No,Unknown,Unknown
+Share workout with another user (link invite),No,Unknown,Yes (partner),Yes (premium),Partial,Yes,Yes,Yes,Yes,Unknown,No,Unknown,Unknown
+Apple Health integration,No,Unknown,Unknown,Unknown,Yes,Yes,Yes,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
+Google Health Connect / Fit,No,Unknown,Unknown,Unknown,Yes (Android),Yes,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
+Apple Watch,No,Unknown,Unknown,Unknown,Yes,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
+Free tier for core use,Yes (self-build),Unknown,Unknown,Partial,Partial,Yes (start),Trial,Trial,Free + IAP,Trial,Trial,Unknown,Unknown
+Typical paid model,None,N/A,N/A,Subscription,PRO subscription,Freemium,Subscription ~8/mo,IAP,Supporter,~13/mo subscription,Unknown,Unknown,Unknown
+Youth / minor oriented compliance (e.g. COPPA emphasis),No,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,Partial (family),Partial,Partial,Partial
+Primary platform(s),iOS 26,iOS Android,iOS Android,iOS Android,iOS Android Watch,iOS Android,iOS,iOS Android,iOS Android,iOS,iOS,Web mobile,iOS Android
+Methodology,"Values: Yes | No | Partial | Unknown. Top Weight from repo README. Other columns from public positioning and store listings as of 2026-03; Unknown = not verified in primary sources. Re-validate before investor or legal use.",,,,,,,,,,,,
